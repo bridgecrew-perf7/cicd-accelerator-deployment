@@ -69,7 +69,10 @@ export default class PipelineConfiguration extends Component {
 					"name": "Python"
 				}
 			],
-			buildList: [
+			buildList: [	
+				{
+					"name": "None"
+				},
 				{
 					"name": "Ant",
 					"Technology": "Java"
@@ -170,7 +173,7 @@ export default class PipelineConfiguration extends Component {
 	clickEvent = (event) => {
 		this.setState({
 			displayConf: "block"
-		})
+		})		
 	}
 	
 	modalShow = () => {
@@ -191,19 +194,57 @@ export default class PipelineConfiguration extends Component {
 		})
 	}
 	
-	handlerChange = () => {
+	setSCMUsername = () => {
 		this.setState({
 			scmUsername: document.getElementById('scmUsername').value
 		})
 	}
 	
-	getValue = (e) => {
-		console.log(e.target.value)
+	setSCMPassword = () => {
+		this.setState({
+			scmPassword: document.getElementById('scmPassword').value
+		})
+	}	
+	
+	getSCMName = (e) => {
+		this.setState({
+			scmName: e.target.value
+		})		
+	}
+
+	getBuildServer = (e) => {
+		this.setState({
+			buildServerName: document.getElementById('buildServer').value
+		})		
+	}
+	
+	setPipelineName = (e) => {
+		this.setState({
+			pipelineName: e.target.value
+		})
+	}
+	
+	getSCMURL = (e) => {
+		this.setState({
+			scmURL: e.target.value
+		})
+	}
+	setbuildTool = (e) => {
+		this.setState({
+			buildToolName: e.target.value
+		})
 	}
 	
 	submit = () => {
+		console.log(this.state.buildServerName)
+		console.log(this.state.pipelineName)
+		console.log(this.state.scmName)
+		console.log(this.state.scmURL)
 		console.log(this.state.scmUsername)
-	}
+		console.log(this.state.scmPassword)
+		console.log(this.state.technology)
+		console.log(this.state.buildToolName)
+	}	
 	
 	render() {
 		
@@ -227,7 +268,7 @@ export default class PipelineConfiguration extends Component {
 							  SCM Username
 							</Form.Label>
 							<Col sm="7">
-							  <Form.Control type="text" autoComplete="off" placeholder="Enter SCM username" onChange={this.handlerChange}/>
+							  <Form.Control type="text" autoComplete="off" placeholder="Enter SCM username" onChange={this.setSCMUsername}/>
 							</Col>
 						  </Form.Group>
 						  <Form.Group as={Row} controlId="scmPassword">
@@ -235,14 +276,14 @@ export default class PipelineConfiguration extends Component {
 							  SCM Password
 							</Form.Label>
 							<Col sm="7">
-							  <Form.Control type="password" placeholder="Enter SCM password" />
+							  <Form.Control type="password" placeholder="Enter SCM password" onChange={this.setSCMPassword}/>
 							</Col>
 						  </Form.Group>
 						</Form>  
 						</center>
 					</Modal.Body>
 					<Modal.Footer>
-					  <Button variant="primary" onClick={this.handleClose}>
+					  <Button variant="primary" onClick={() => {this.setSCMUsername(); this.setSCMPassword(); this.handleClose()}}>
 						Save
 					  </Button>					  
 					</Modal.Footer>
@@ -263,21 +304,21 @@ export default class PipelineConfiguration extends Component {
 			</Grid>	
 			<Grid item xs={9}>
 					<Form style={ form }>
-					  <Form.Group as={Row} controlId="formPlaintextEmail">
+					  <Form.Group as={Row} controlId="pipelineName">
 						<Form.Label column sm="3">
 						  Pipeline Name
 						</Form.Label>
 						<Col sm="5">
-						  <Form.Control type="text" placeholder="Enter pipeline name" />
+						  <Form.Control type="text" autoComplete="off" placeholder="Enter pipeline name" onChange={this.setPipelineName}/>
 						</Col>
 					  </Form.Group>
 					  
-					  <Form.Group as={Row}>
+					  <Form.Group as={Row} controlId="buildServer">
 						<Form.Label column sm="3">
 						  Build Server
 						</Form.Label>
 						<Col sm="5">
-						      <Form.Control as="select" custom onChange={this.clickEvent}>
+						      <Form.Control as="select" custom onChange={() => {this.clickEvent(); this.getBuildServer()}} >
 							  {
 								  this.state.buildServers.map(buildServer => 
 									<option> { buildServer.name } </option>
@@ -287,12 +328,12 @@ export default class PipelineConfiguration extends Component {
 						</Col>
 					  </Form.Group>
 					  <div style={{ display: `${this.state.displayConf}` }}>
-						  <Form.Group as={Row}>
+						  <Form.Group as={Row} controlId="scmName">
 							<Form.Label column sm="3">
 							  SCM Name
 							</Form.Label>
 							<Col sm="5">
-							  	<Form.Control as="select" custom onChange={this.getValue}>
+							  	<Form.Control as="select" custom onChange={this.getSCMName}>
 							  {
 								  this.state.scmList.map(scm => 
 									<option> { scm.name } </option>
@@ -306,15 +347,15 @@ export default class PipelineConfiguration extends Component {
 						  SCM URL Name
 						</Form.Label>
 						<Col sm="5">
-						  <Form.Control type="text" placeholder="Enter SCM url" onClick={this.modalShow}/>
+						  <Form.Control type="text" autoComplete="off" placeholder="Enter SCM url" onChange={this.getSCMURL} onBlur={this.modalShow}/>
 						</Col>
 					  </Form.Group>	
-						  <Form.Group as={Row}>
+						  <Form.Group as={Row} controlId="technologyName">
 							<Form.Label column sm="3">
 							  Technology Name
 							</Form.Label>
 							<Col sm="5">
-							  <Form.Control as="select" custom onChange={this.setTechnology}>
+							  <Form.Control as="select" custom onChange={this.setTechnology}>								
 							  {
 								  this.state.technologyList.map(technology => 
 									<option> { technology.name } </option>
@@ -328,7 +369,8 @@ export default class PipelineConfiguration extends Component {
 							  Build Tool Name
 							</Form.Label>
 							<Col sm="5">
-							<Form.Control as="select" custom>
+							<Form.Control as="select" custom onChange={this.setbuildTool}>
+							<option> None </option>
 							  {
 								  this.state.buildList.map(build => 
 									(this.state.technology === build.Technology) ? (<option> { build.name } </option>) : ("")
@@ -337,7 +379,7 @@ export default class PipelineConfiguration extends Component {
 							</Form.Control>
 							</Col>
 						  </Form.Group>
-						  <Form.Group as={Row}>
+						  {/* 						  <Form.Group as={Row}>
 							<Form.Label column sm="3">
 							  Unit Test Tool Name
 							</Form.Label>
@@ -350,13 +392,14 @@ export default class PipelineConfiguration extends Component {
 							  }
 							</Form.Control>
 							</Col>
-						  </Form.Group>
+						  </Form.Group> */}
 						  <Form.Group as={Row}>
 							<Form.Label column sm="3">
 							  Packaging Format
 							</Form.Label>
 							<Col sm="5">
 							<Form.Control as="select" custom>
+							<option> None </option>
 							  {
 								  this.state.packageList.map(pkg => 
 									(this.state.technology === pkg.Technology) ? (<option> { pkg.name } </option>) : ("")
@@ -370,7 +413,7 @@ export default class PipelineConfiguration extends Component {
 							  Repository URL
 							</Form.Label>
 							<Col sm="5">
-							  	<Form.Control type="text" placeholder="Enter repository URL" />								
+							  	<Form.Control type="text" autoComplete="off" placeholder="Enter repository URL" />								
 							</Col>
 						  </Form.Group>
 							  <Button variant="primary" style={{ marginLeft: "-120px" }} onClick={this.submit}>
