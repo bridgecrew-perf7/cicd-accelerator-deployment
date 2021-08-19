@@ -1,0 +1,96 @@
+apiVersion: v1
+data:
+  name: surendhardevops
+  url: localhost
+kind: ConfigMap
+metadata:
+  name: cicd-config
+  namespace: cicd-accelerator
+  labels:
+    name: cicd-image
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  labels: 
+    app: cicd-image
+  name: cicd-image
+  namespace: cicd-accelerator
+spec: 
+  replicas: 3
+  selector: 
+    matchLabels: 
+      app: cicd-image
+  template: 
+    metadata: 
+      labels: 
+        app: cicd-image
+    spec: 
+      containers: 
+        - image: "docker.io/surendharselvakumar/cicd-image:latest"
+          name: cicd-image
+          ports: 
+            - containerPort: 3000
+              protocol: TCP
+            - containerPort: 3001
+              protocol: TCP            
+          env:
+          - name: myname
+            valueFrom: 
+              configMapKeyRef:
+                name: cicd-config
+                key: name
+          - name: myurl
+            valueFrom:
+              configMapKeyRef:
+                name: cicd-config
+                key: url
+                
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  labels:
+    app: cicd-image
+  name: cicd-frontend-service
+  namespace: cicd-accelerator
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: cicd-image
+  type: NodePort
+status:
+  loadBalancer:
+    ingress:
+    - hostname: localhost
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  labels:
+    app: cicd-image
+  name: cicd-backend-service
+  namespace: cicd-accelerator
+spec:
+  ports:
+  - port: 3001
+    protocol: TCP
+    targetPort: 3001
+  selector:
+    app: cicd-image
+  type: NodePort
+status:
+  loadBalancer:
+    ingress:
+    - hostname: localhost
