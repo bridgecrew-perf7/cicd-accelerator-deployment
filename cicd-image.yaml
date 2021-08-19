@@ -29,7 +29,7 @@ spec:
         app: cicd-image
     spec: 
       containers: 
-        - image: "docker.io/surendharselvakumar/cicd-image:latest"
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.0"
           name: cicd-image
           ports: 
             - containerPort: 3000
@@ -61,12 +61,12 @@ metadata:
   namespace: cicd-accelerator
 spec:
   ports:
-  - port: 3000
+  - port: 3003 #port accessing in the server
     protocol: TCP
-    targetPort: 3000
+    targetPort: 3000 #port exposed in docker container
   selector:
     app: cicd-image
-  type: NodePort
+  type: LoadBalancer #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
 status:
   loadBalancer:
     ingress:
@@ -84,12 +84,12 @@ metadata:
   namespace: cicd-accelerator
 spec:
   ports:
-  - port: 3001
+  - port: 3001 #port accessing in the server
     protocol: TCP
-    targetPort: 3001
+    targetPort: 3001 #port exposed in docker container
   selector:
     app: cicd-image
-  type: NodePort
+  type: LoadBalancer  #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
 status:
   loadBalancer:
     ingress:
