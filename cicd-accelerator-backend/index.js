@@ -2,7 +2,7 @@ var express = require('express');
 
 const app = express()
 
-var port = 3000
+var port = 3001
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -28,5 +28,12 @@ app.get('/api/checkUser', (req, res) => {
 	else
 		res.end('Unauthorized')
 	
-	//res.end('Authorized')
+})
+
+app.get('/hotels', (req, res) => {
+	res.end('Surendhar Hotel')
+})
+
+app.get('/monument', (req, res) => {
+	res.end('Surendhar Statue')
 })

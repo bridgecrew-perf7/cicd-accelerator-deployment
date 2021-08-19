@@ -91,11 +91,11 @@ export default class Login extends Component {
 								<Form.Label>Sign In</Form.Label>
 								<Form.Group controlId="formBasicEmail">
 							<Form.Label>Enter username</Form.Label>
-							<Form.Control type="input" placeholder="Enter username" onChange={this.changeHandler}/>
+							<Form.Control type="input" autoComplete="off" placeholder="Enter username" onChange={this.changeHandler}/>
 							</Form.Group>
 					  <Form.Group controlId="formBasicPassword">
 						<Form.Label>Enter password</Form.Label>
-						<Form.Control type="password" placeholder="Password" onChange={this.changeHandler}/>
+						<Form.Control type="password" autoComplete="off" placeholder="Password" onChange={this.changeHandler}/>
 					  </Form.Group>
 					  </center>
 					</Form>

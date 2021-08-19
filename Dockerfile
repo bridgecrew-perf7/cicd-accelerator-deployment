@@ -1,13 +1,13 @@
 FROM ubuntu:latest
 
-ADD cicd-accelerator cicd-accelerator 
+ADD supervisord.conf /etc/supervisord.conf
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install nodejs npm -y
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install nodejs npm curl supervisor -y
 
-WORKDIR cicd-accelerator
+ADD cicd-accelerator-frontend cicd-accelerator-frontend
 
-RUN npm install
+ADD cicd-accelerator-backend cicd-accelerator-backend
 
-CMD ["npm", "start"]
+EXPOSE 3001 3000
 
-EXPOSE 3000
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]
