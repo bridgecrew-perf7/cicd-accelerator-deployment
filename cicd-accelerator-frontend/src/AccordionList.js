@@ -4,6 +4,8 @@ import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'	
 import CancelIcon from '@material-ui/icons/Cancel';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
+import axios from 'axios'
 
 export default class AccordionList extends Component {
 	
@@ -11,18 +13,9 @@ export default class AccordionList extends Component {
 		super()
 		
 		this.state = {
-			buildServers: [
-				{
-					"name": "CNAP_Build_Server",
-					"id": 1
-				},
-				{
-					"name": "Wipro_Build_Server",
-					"id": 2
-				}
-			],
+			buildServers: [],
 			pipelines: [
-				{
+				/* {
 					"name": "cnap_test_pipeline",
 					"buildServer": "CNAP_Build_Server"
 				},
@@ -37,7 +30,7 @@ export default class AccordionList extends Component {
 				{
 					"name": "wipro_sample_pipeline",
 					"buildServer": "Wipro_Build_Server"
-				}
+				} */
 			],
 			deployServers: [
 				{
@@ -52,14 +45,36 @@ export default class AccordionList extends Component {
 		}
 	}
 	
+	componentDidMount() {
+		
+		axios.get('http://localhost:3001/api/getBuildServers')
+		.then(res => {			
+			this.setState({
+				buildServers: res.data
+			})
+			//console.log(this.state.buildServers)
+		})
+		
+		axios.get('http://localhost:3001/api/getPipelines')
+		.then(res => {
+			console.log(res.data)
+			this.setState({
+				pipelines: res.data
+			})
+		})
+	}
+	
+	
 	render() {
 		
+		
+		
 		const buildServer = this.state.buildServers.map(buildServer => 
-			<p key={buildServer.id} > { buildServer.name } <span><CancelIcon color='error' onClick={() => alert(`${buildServer.name} is getting deleted`)}/></span></p>  
+			<p key={buildServer.key} > { buildServer.name } <span><CancelIcon color='error' onClick={() => alert(`${buildServer.name} is getting deleted`)}/></span></p>  
 		)
 		
 		const pipeline = this.state.pipelines.map((item, index) => 
-			<p key={index}> {item.name} <span><CancelIcon color='error' onClick={() => alert(`${item.name} is getting deleted`)}/></span></p>
+			<p key={index}> {item.pipelineName} <span><PlayCircleFilledIcon style={{ color: "green" }} onClick={() => alert(`${item.pipelineName} is getting triggered`)}/></span> <span><CancelIcon color='error' onClick={() => alert(`${item.pipelineName} is getting deleted`)}/></span></p>
 		)
 		const deployServer = this.state.deployServers.map((item, index) => 
 			<p key={index}> {item.name} <span><CancelIcon color='error' onClick={() => alert(`${item.name} is getting deleted`)}/></span></p>

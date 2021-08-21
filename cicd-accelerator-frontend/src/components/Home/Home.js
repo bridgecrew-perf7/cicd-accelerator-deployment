@@ -26,7 +26,8 @@ export default class Home extends Component {
 		console.log(username)
 		this.setState({
 			username: username
-		})	
+		})
+		
 	}
 	
 	logout = () => {

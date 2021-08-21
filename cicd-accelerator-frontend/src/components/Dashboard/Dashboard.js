@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button'
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import axios from 'axios'
 
 export default class Dashboard extends Component {
 	
@@ -21,16 +22,6 @@ export default class Dashboard extends Component {
 			isVisible: false,
 			pipelineName: "",
 			username: "",
-			buildServers: [
-				{
-					"name": "CNAP_Build_Server",
-					"id": 1
-				},
-				{
-					"name": "Wipro_Build_Server",
-					"id": 2
-				}
-			],
 			pipelines: [
 				{
 					"name": "cnap_test_pipeline",
@@ -39,8 +30,7 @@ export default class Dashboard extends Component {
 					"stages": [{
 						"gitPull": "success",
 						"mvnBuild": "success",
-						"packaging": "failed",
-						"testing": "None"
+						"packaging": "failed"
 					}]
 				},
 				{
@@ -50,8 +40,7 @@ export default class Dashboard extends Component {
 					"stages": [{
 						"gitPull": "success",
 						"mvnBuild": "success",
-						"packaging": "success",
-						"testing": "success"
+						"packaging": "success"
 					}]					
 				},
 				{
@@ -61,8 +50,7 @@ export default class Dashboard extends Component {
 					"stages": [{
 						"gitPull": "success",
 						"mvnBuild": "success",
-						"packaging": "success",
-						"testing": "failed"
+						"packaging": "success"
 					}]
 				},
 				{
@@ -72,8 +60,7 @@ export default class Dashboard extends Component {
 					"stages": [{
 						"gitPull": "success",
 						"mvnBuild": "success",
-						"packaging": "success",
-						"testing": "success"
+						"packaging": "success"
 					}]
 				},
 				{
@@ -83,15 +70,14 @@ export default class Dashboard extends Component {
 					"stages": [{
 						"gitPull": "success",
 						"mvnBuild": "success",
-						"packaging": "inprogress",
-						"testing": "None"
+						"packaging": "inprogress"
 					}]					
 				}				
 			],
 			pipeline: []
 			
 		}
-	}	
+	}
 	
 	modalDisplay = (e) => {
 		this.setState({
@@ -103,8 +89,7 @@ export default class Dashboard extends Component {
 		var pipelineDetails = {
 			"gitPull": e.stages[0].gitPull,
 			"mvnBuild": e.stages[0].mvnBuild,
-			"packaging": e.stages[0].packaging,
-			"testing": e.stages[0].testing
+			"packaging": e.stages[0].packaging			
 		}
 		//console.log(pipelineDetails)
 		
@@ -126,6 +111,7 @@ export default class Dashboard extends Component {
 
 	
 	render() {
+				
 		
 		console.log((this.state.pipeline))
 		
@@ -138,9 +124,6 @@ export default class Dashboard extends Component {
 				<Step active={item.mvnBuild === "success" ? true : false}>
 					<StepLabel> MVN Build </StepLabel>
 				</Step>				
-				<Step active={item.packaging === "success" ? true : false}>
-					<StepLabel> Packaging </StepLabel>
-				</Step>	
 				<Step active={item.testing === "success" ? true : false}>
 					<StepLabel> Testing </StepLabel>
 				</Step>					
