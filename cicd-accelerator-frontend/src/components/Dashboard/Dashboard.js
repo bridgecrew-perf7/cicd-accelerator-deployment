@@ -124,8 +124,8 @@ export default class Dashboard extends Component {
 				<Step active={item.mvnBuild === "success" ? true : false}>
 					<StepLabel> MVN Build </StepLabel>
 				</Step>				
-				<Step active={item.testing === "success" ? true : false}>
-					<StepLabel> Testing </StepLabel>
+				<Step active={item.packaging === "packaging" ? true : false}>
+					<StepLabel> Packaging </StepLabel>
 				</Step>					
 			</Stepper>			
 		</div>

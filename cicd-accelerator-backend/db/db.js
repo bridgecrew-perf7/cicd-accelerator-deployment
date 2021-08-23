@@ -96,6 +96,18 @@ module.exports = {
 			}
 		})
 	},
+	deleteBuildServer: function(buildServerName, callback) {
+ 		connection.query("delete from buildServer where serverName='"+buildServerName+"'", function(err, stdout) {
+			if(err) {
+				console.log(err)
+				callback(null, err)
+			}
+			else {
+				console.log(buildServerName+" has been deleted from database")
+				callback("Deleted", null)
+			}
+		})
+	},
 	getPipelines: function(callback) {
 		var pipelines = []
 		var obj = {}
@@ -116,6 +128,40 @@ module.exports = {
 				}
 				console.log(pipelines)
 				callback((pipelines), null)
+			}
+		})		
+	},
+	triggerPipeline: function(pipelineName, callback) {
+		var obj = {}
+		//console.log('select * from pipelineDetails where pipelineName = "'+pipelineName+'"')
+		connection.query('select * from pipelineDetails where pipelineName = "'+pipelineName+'"', function(err, stdout) {
+			if(err) {
+				console.log(err)
+				callback(err, null)
+			}
+			else {
+				//console.log(stdout)
+ 				var buildServer = stdout[0].buildServer
+				var pipelineInputs = stdout[0].pipelineInputs
+				connection.query('select * from buildServer where serverName ="'+buildServer+'"', function(sererr, serout) {
+					if(sererr) {
+						console.log(sererr)
+						callback(sererr, null)
+					}
+					else {
+						var buildServerURL = serout[0].serverURL
+						var buildServerUsername = serout[0].username
+						var buildServerPassword = serout[0].password
+						obj = {
+							"buildSeverURL": buildServerURL,
+							"buildServerUsername": buildServerUsername,
+							"buildServerPassword": buildServerPassword,
+							"pipelineInputs": JSON.parse(pipelineInputs)
+						}
+						//console.log(obj);
+						callback(obj, null)
+					}
+				})
 			}
 		})		
 	}

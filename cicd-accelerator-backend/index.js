@@ -35,6 +35,10 @@ app.post('/api/addPipelineDetails', routedata.addPipelineDetails);
 
 app.get('/hotels', routedata.getHotels);
 
+app.get('/api/deleteBuildServer/:name', routedata.deleteBuildServer)
+
+app.get('/api/triggerPipeline/:name', routedata.triggerPipeline)
+
 app.get('/monument', (req, res) => {
 	res.end('Surendhar Statue')
 })

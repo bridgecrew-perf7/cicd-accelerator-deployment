@@ -1,4 +1,5 @@
 var db = require('../db/db.js')
+var core = require('../core/core.js')
 
 module.exports = {
 
@@ -74,6 +75,20 @@ module.exports = {
 			}			
 		})
 	},
+
+	deleteBuildServer: function(req, res) {
+		var buildServerName = req.params.name
+		db.deleteBuildServer(buildServerName, function(pass, fail) {
+			if(pass) {
+				//console.log(JSON.stringify(pass))
+				res.end((pass))
+			}
+			else {
+				console.log(fail)
+				res.end(fail)
+			}			
+		})
+	},
 	
 	addPipelineDetails: function(req, res) {
 		var pipelineInputs = (req.body)
@@ -84,6 +99,26 @@ module.exports = {
 			if(pass) {
 				var out = pipelineName+" has been inserted into the db"
 				res.end(out)
+			}
+			else {
+				console.log(fail)
+				res.end(fail)
+			}
+		})
+	},
+	triggerPipeline: function(req, res) {
+		var pipelineName = req.params.name
+		console.log(pipelineName)
+ 		db.triggerPipeline(pipelineName, function(pass, fail) {
+			if(pass) {			
+				core.triggerPipeline(pass, function(trigger_pass, trigger_fail) {
+					if(trigger_pass) {
+						console.log(trigger_pass)
+					}
+					else {
+						console.log(trigger_fail)
+					}
+				})
 			}
 			else {
 				console.log(fail)

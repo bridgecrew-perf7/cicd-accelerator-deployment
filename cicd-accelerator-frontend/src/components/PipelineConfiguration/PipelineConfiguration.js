@@ -32,7 +32,6 @@ export default class PipelineConfiguration extends Component {
 			technology: "null",
 			pipelineName: "",
 			buildServerName: "",
-			scmName: "",
 			scmURL: "",
 			scmUsername: "",
 			scmPassword: "",
@@ -42,20 +41,6 @@ export default class PipelineConfiguration extends Component {
 			unitTestToolName: "",
 			packagingFormat: "",
 			repoURL: "",
-			scmList: [
-				{
-					"name": "None"
-				},
-				{
-					"name": "Git"
-				},				
-				{
-					"name": "BitBucket"
-				},				
-				{
-					"name": "Mercury"
-				}
-			],
 			technologyList: [
 				{
 					"name": "None"
@@ -209,12 +194,6 @@ export default class PipelineConfiguration extends Component {
 			scmPassword: document.getElementById('scmPassword').value
 		})
 	}	
-	
-	getSCMName = (e) => {
-		this.setState({
-			scmName: e.target.value
-		})		
-	}
 
 	getBuildServer = (e) => {
 		this.setState({
@@ -278,7 +257,6 @@ export default class PipelineConfiguration extends Component {
 			"buildServerName": this.state.buildServerName,
 			"pipelineInputs": {
 				"scm": {
-					"scmName": this.state.scmName,
 					"scmURL": this.state.scmURL,
 					"scmUsername": this.state.scmUsername,
 					"scmPassword": this.state.scmPassword	
@@ -399,7 +377,7 @@ export default class PipelineConfiguration extends Component {
 						</Col>
 					  </Form.Group>
 					  <div style={{ display: `${this.state.displayConf}` }}>
-						  <Form.Group as={Row} controlId="scmName">
+						  {/* 						  <Form.Group as={Row} controlId="scmName">
 							<Form.Label column sm="3">
 							  SCM Name
 							</Form.Label>
@@ -412,7 +390,7 @@ export default class PipelineConfiguration extends Component {
 							  }
 							</Form.Control>
 							</Col>
-						  </Form.Group>
+						  </Form.Group> */}
 					  <Form.Group as={Row} controlId="scmURL">
 						<Form.Label column sm="3">
 						  SCM URL Name
