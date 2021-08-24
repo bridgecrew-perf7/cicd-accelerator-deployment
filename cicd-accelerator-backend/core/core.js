@@ -1,3 +1,5 @@
+var congfigjson = require('./configjson.js')
+
 module.exports = {
 
 	triggerPipeline: function(values, callback) {
@@ -6,8 +8,8 @@ module.exports = {
 		var jenkins = require('jenkins')({ baseUrl: url, crumbIssuer: true });
 		jenkins.job.list(function(err, data) {
 		  if (err) throw err;
-		 
 		  console.log('jobs', data);
+		  console.log(JSON.stringify(congfigjson.json))
 		});
 	}
 

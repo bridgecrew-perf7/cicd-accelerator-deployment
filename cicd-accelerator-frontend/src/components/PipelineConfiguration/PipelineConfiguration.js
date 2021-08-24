@@ -28,6 +28,7 @@ export default class PipelineConfiguration extends Component {
 		
 		this.state = {
 			isVisible: false,
+			repoVisible: false,
 			displayConf: "none",
 			technology: "null",
 			pipelineName: "",
@@ -36,11 +37,17 @@ export default class PipelineConfiguration extends Component {
 			scmUsername: "",
 			scmPassword: "",
 			scmBranch: "",
+			scmCredId: "",
 			technologyName: "",
 			buildToolName: "",
 			unitTestToolName: "",
 			packagingFormat: "",
 			repoURL: "",
+			repoUsername: "",
+			repoPassword: "",
+			groupId: "",
+			artifactId: "",
+			version: "",
 			technologyList: [
 				{
 					"name": "None"
@@ -170,6 +177,11 @@ export default class PipelineConfiguration extends Component {
 			isVisible: true
 		})
 	}
+	repoShow = () => {
+		this.setState({
+			repoVisible: true
+		})
+	}
 	
 	setTechnology = (event) => {
 		this.setState({
@@ -182,6 +194,11 @@ export default class PipelineConfiguration extends Component {
 			isVisible: false
 		})
 	}
+	repoClose = () => {
+		this.setState({
+			repoVisible: false
+		})
+	}
 	
 	setSCMUsername = () => {
 		this.setState({
@@ -192,6 +209,11 @@ export default class PipelineConfiguration extends Component {
 	setSCMPassword = () => {
 		this.setState({
 			scmPassword: document.getElementById('scmPassword').value
+		})
+	}
+	setSCMCredId = () => {
+		this.setState({
+			scmCredId: document.getElementById('scmCredId').value
 		})
 	}	
 
@@ -229,9 +251,35 @@ export default class PipelineConfiguration extends Component {
 		})
 	}
 	
+	setREPOUsername = (e) =>{
+		this.setState({
+			repoUsername: document.getElementById('repoUsername').value
+		})
+	}
+	setREPOPassword = (e) =>{
+		this.setState({
+			repoPassword: document.getElementById('repoPassword').value
+		})
+	}
+	setGroupId = (e) =>{
+		this.setState({
+			groupId: document.getElementById('groupId').value
+		})
+	}	
+	setArtifactId = (e) =>{
+		this.setState({
+			artifactId: document.getElementById('artifactId').value
+		})
+	}
+	setVersion = (e) =>{
+		this.setState({
+			version: document.getElementById('version').value
+		})
+	}
+	
 	setSCMBranch = (e) => {
 		this.setState({
-			scmBranch: e.target.value
+			scmBranch: document.getElementById('scmBranch').value
 		})
 	}
 	
@@ -262,28 +310,21 @@ export default class PipelineConfiguration extends Component {
 					"scmPassword": this.state.scmPassword	
 				},
 				"technology": this.state.technology,
-				"buildToolName": this.state.buildToolName,
-				"packagingFormat": this.state.packagingFormat,
-				"repoURL": this.state.repoURL
+				"buildToolName": this.state.buildToolName,				
+				"repoInputs": {
+					"repoURL": this.state.repoURL,
+					"repoUsername": this.state.repoUsername,
+					"repoPassword": this.state.repoPassword,
+					"groupId": this.state.groupId,
+					"artifactId": this.state.artifactId,
+					"version": this.state.version,
+					"packagingFormat": this.state.packagingFormat     
+				} 
 			}
 		}		
 		axios.post('http://localhost:3001/api/addPipelineDetails', {
 			data: this.pipelineConf
 		})
-		
-		console.log(this.pipelineConf)
-		console.log(this.state.buildServerName)
-		console.log(this.state.pipelineName)
-		console.log(this.state.scmName)
-		console.log(this.state.scmURL)
-		console.log(this.state.scmUsername)
-		console.log(this.state.scmPassword)
-		console.log(this.state.technology)
-		console.log(this.state.buildToolName)
-		console.log(this.state.packagingFormat)
-		console.log(this.state.repoURL)
-		
-		//console.log(this.state.pipelineConf)
 	}	
 	
 	render() {
@@ -324,14 +365,83 @@ export default class PipelineConfiguration extends Component {
 							  SCM Branch
 							</Form.Label>
 							<Col sm="7">
-							  <Form.Control type="password" placeholder="Enter SCM Branch" onChange={this.setSCMBranch}/>
+							  <Form.Control type="text" placeholder="Enter SCM Branch" onChange={this.setSCMBranch}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="scmCredId">
+							<Form.Label column sm="5">
+							  SCM Credentials Id
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter SCM Credentials" onChange={this.setSCMCredId}/>
 							</Col>
 						  </Form.Group>
 						</Form> 					
 						</center>
 					</Modal.Body>
 					<Modal.Footer>
-					  <Button variant="primary" onClick={() => {this.setSCMUsername(); this.setSCMPassword(); this.handleClose()}}>
+					  <Button variant="primary" onClick={() => {this.setSCMUsername(); this.setSCMPassword(); this.setSCMBranch(); this.setSCMCredId(); this.handleClose()}}>
+						Save
+					  </Button>					  
+					</Modal.Footer>
+				  </Modal>
+				  <Modal
+					show={this.state.repoVisible}
+					onHide={this.repoClose}
+					backdrop="static"
+					keyboard={false}
+				  >
+					<Modal.Header closeButton>
+					  <Modal.Title> Repository authentication details</Modal.Title>
+					</Modal.Header>
+					<Modal.Body id="modalBody">
+						<center>
+						<Form style={ form }>
+						  <Form.Group as={Row} controlId="repoUsername">
+							<Form.Label column sm="5">
+							  Repo Username
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" autoComplete="off" placeholder="Enter Repo username" onChange={this.setREPOUsername}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="repoPassword">
+							<Form.Label column sm="5">
+							  Repo Password
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="password" placeholder="Enter Repo Password" onChange={this.setREPOPassword}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="groupId">
+							<Form.Label column sm="5">
+							  Group Id
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter Group Id" onChange={this.setGroupId}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="artifactId">
+							<Form.Label column sm="5">
+							  Artifact Id
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter Artifact Id" onChange={this.setArtifactId}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="version">
+							<Form.Label column sm="5">
+							  Version
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter version" onChange={this.setVersion}/>
+							</Col>
+						  </Form.Group>
+						</Form> 					
+						</center>
+					</Modal.Body>
+					<Modal.Footer>
+					  <Button variant="primary" onClick={() => {this.setREPOUsername(); this.setREPOPassword();  this.setArtifactId(); this.setGroupId(); this.setVersion(); this.repoClose()}}>
 						Save
 					  </Button>					  
 					</Modal.Footer>
@@ -462,7 +572,7 @@ export default class PipelineConfiguration extends Component {
 							  Repository URL
 							</Form.Label>
 							<Col sm="5">
-							  	<Form.Control type="text" autoComplete="off" placeholder="Enter repository URL" onChange={this.setRepositoryURL}/>								
+							  	<Form.Control type="text" autoComplete="off" placeholder="Enter repository URL" onChange={this.setRepositoryURL} onBlur={this.repoShow}/>								
 							</Col>
 						  </Form.Group>
 							  <Button variant="primary" style={{ marginLeft: "-120px" }} onClick={this.submit}>
