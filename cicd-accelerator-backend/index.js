@@ -8,6 +8,7 @@ const routedata = require('./route/route.js')
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   express.urlencoded({
     extended: true
@@ -35,7 +36,9 @@ app.post('/api/addPipelineDetails', routedata.addPipelineDetails);
 
 app.get('/hotels', routedata.getHotels);
 
-app.get('/api/deleteBuildServer/:name', routedata.deleteBuildServer)
+app.delete('/api/deleteBuildServer/:name', routedata.deleteBuildServer)
+
+app.delete('/api/deletePipeline/:name', routedata.deletePipeline)
 
 app.get('/api/triggerPipeline/:name', routedata.triggerPipeline)
 

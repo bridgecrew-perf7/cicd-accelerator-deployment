@@ -108,6 +108,18 @@ module.exports = {
 			}
 		})
 	},
+	deletePipeline: function(pipelineName, callback) {
+ 		connection.query("delete from pipelineDetails where pipelineName='"+pipelineName+"'", function(err, stdout) {
+			if(err) {
+				console.log(err)
+				callback(null, err)
+			}
+			else {
+				console.log(pipelineName+" has been deleted from database")
+				callback("Deleted", null)
+			}
+		})
+	},
 	getPipelines: function(callback) {
 		var pipelines = []
 		var obj = {}
@@ -154,6 +166,7 @@ module.exports = {
 						var buildServerPassword = serout[0].password
 						obj = {
 							"buildSeverURL": buildServerURL,
+							"pipelineName": pipelineName,
 							"buildServerUsername": buildServerUsername,
 							"buildServerPassword": buildServerPassword,
 							"pipelineInputs": JSON.parse(pipelineInputs)

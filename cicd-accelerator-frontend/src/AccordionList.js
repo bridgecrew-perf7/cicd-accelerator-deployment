@@ -57,7 +57,7 @@ export default class AccordionList extends Component {
 		
 		axios.get('http://localhost:3001/api/getPipelines')
 		.then(res => {
-			console.log(res.data)
+			//console.log(res.data)
 			this.setState({
 				pipelines: res.data
 			})
@@ -70,11 +70,11 @@ export default class AccordionList extends Component {
 		
 		
 		const buildServer = this.state.buildServers.map(buildServer => 
-			<p key={buildServer.key} > { buildServer.name } <span onClick={(e) => axios.get('http://localhost:3001/api/deleteBuildServer/'+buildServer.name).then(res => {console.log(res)})}><CancelIcon color='error'/></span></p>  
+			<p key={buildServer.key} > { buildServer.name } <span onClick={(e) => axios.delete('http://localhost:3001/api/deleteBuildServer/'+buildServer.name).then(res => {console.log(res)})}><CancelIcon color='error'/></span></p>  
 		)
 		
 		const pipeline = this.state.pipelines.map((item, index) => 
-			<p key={index}> {item.pipelineName} <span><PlayCircleFilledIcon style={{ color: "green" }} onClick={(e) => axios.get('http://localhost:3001/api/triggerPipeline/'+item.pipelineName).then(res => {console.log(res)})}/></span> <span><CancelIcon color='error' onClick={() => alert(`${item.pipelineName} is getting deleted`)}/></span></p>
+			<p key={index}> {item.pipelineName} <span><PlayCircleFilledIcon style={{ color: "green" }} onClick={(e) => axios.get('http://localhost:3001/api/triggerPipeline/'+item.pipelineName).then(res => {console.log(res)})}/></span> <span><CancelIcon color='error' onClick={(e) => axios.delete('http://localhost:3001/api/deletePipeline/'+item.pipelineName).then(res => {console.log(res)})}/></span></p>
 		)
 		const deployServer = this.state.deployServers.map((item, index) => 
 			<p key={index}> {item.name} <span><CancelIcon color='error' onClick={() => alert(`${item.name} is getting deleted`)}/></span></p>

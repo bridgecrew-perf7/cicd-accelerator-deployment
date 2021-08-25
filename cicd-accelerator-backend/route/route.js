@@ -89,12 +89,24 @@ module.exports = {
 			}			
 		})
 	},
+	deletePipeline: function(req, res) {
+		var pipelineName = req.params.name
+		db.deletePipeline(pipelineName, function(pass, fail) {
+			if(pass) {
+				//console.log(JSON.stringify(pass))
+				res.end((pass))
+			}
+			else {
+				console.log(fail)
+				res.end(fail)
+			}			
+		})
+	},
 	
 	addPipelineDetails: function(req, res) {
 		var pipelineInputs = (req.body)
 		var pipelineName = pipelineInputs.data.pipelineName
-		var buildServerName = pipelineInputs.data.buildServerName
-		//console.log(pipelineInputs)
+		var buildServerName = pipelineInputs.data.buildServerName		
 		db.addPipelineDetails(pipelineName, buildServerName, pipelineInputs, function(pass, fail) {
 			if(pass) {
 				var out = pipelineName+" has been inserted into the db"
@@ -113,6 +125,7 @@ module.exports = {
 			if(pass) {			
 				core.triggerPipeline(pass, function(trigger_pass, trigger_fail) {
 					if(trigger_pass) {
+						console.log('In route.js')
 						console.log(trigger_pass)
 					}
 					else {

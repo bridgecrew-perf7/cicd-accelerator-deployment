@@ -57,8 +57,7 @@ export default class Login extends Component {
 			}
 		}).then(resp => {
 			console.log(resp.data)
-			if(resp.data == "Authorized") {
-				//alert('Authorized')
+			if(resp.data == "Authorized") {				
 				this.props.history.push('/home', {username: this.state.username})
 				console.log(this.props.history.location.state.username)
 				sessionStorage.setItem('name', this.props.history.location.state.username);

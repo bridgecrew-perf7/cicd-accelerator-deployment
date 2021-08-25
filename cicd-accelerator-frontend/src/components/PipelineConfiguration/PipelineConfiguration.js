@@ -48,6 +48,7 @@ export default class PipelineConfiguration extends Component {
 			groupId: "",
 			artifactId: "",
 			version: "",
+			fileName: "",
 			technologyList: [
 				{
 					"name": "None"
@@ -276,6 +277,11 @@ export default class PipelineConfiguration extends Component {
 			version: document.getElementById('version').value
 		})
 	}
+	setfileName = (e) =>{
+		this.setState({
+			version: document.getElementById('fileName').value
+		})
+	}
 	
 	setSCMBranch = (e) => {
 		this.setState({
@@ -319,6 +325,7 @@ export default class PipelineConfiguration extends Component {
 					"groupId": this.state.groupId,
 					"artifactId": this.state.artifactId,
 					"version": this.state.version,
+					"fileName": this.state.fileName,
 					"packagingFormat": this.state.packagingFormat     
 				} 
 			}
@@ -428,6 +435,14 @@ export default class PipelineConfiguration extends Component {
 							</Form.Label>
 							<Col sm="7">
 							  <Form.Control type="text" placeholder="Enter Artifact Id" onChange={this.setArtifactId}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="fileName">
+							<Form.Label column sm="5">
+							  File Name
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter File Name" onChange={this.setfileName}/>
 							</Col>
 						  </Form.Group>
 						  <Form.Group as={Row} controlId="version">

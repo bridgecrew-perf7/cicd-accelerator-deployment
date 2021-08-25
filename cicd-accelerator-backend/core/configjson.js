@@ -6,7 +6,12 @@ module.exports = {
    "keepDependencies": "false",
    "properties": [],
    "scm": {
-      "@plugin": "git@4.8.1",
+      "@": {
+		"plugin": "git@4.8.1",  
+	  },
+	  "@": {
+		  "class": "hudson.plugins.git.GitSCM"
+	  },
       "configVersion": "2",
       "userRemoteConfigs": {
          "hudson.plugins.git.UserRemoteConfig": {
@@ -54,7 +59,9 @@ module.exports = {
    "publishers": [],
    "buildWrappers": {
       "hudson.plugins.ws__cleanup.PreBuildCleanup": {
-         "@plugin": "ws-cleanup@0.39",
+         "@": {
+			"plugin": "ws-cleanup@0.39", 
+		 },
          "deleteDirs": "false",
          "cleanupParameter": [],
          "externalDelete": [],
