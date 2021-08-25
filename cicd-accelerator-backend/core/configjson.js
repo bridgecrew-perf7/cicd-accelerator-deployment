@@ -10,8 +10,8 @@ module.exports = {
       "configVersion": "2",
       "userRemoteConfigs": {
          "hudson.plugins.git.UserRemoteConfig": {
-            "url": "https://github.com/SurenPonnusamy/sparkjava-war-example",
-            "credentialsId": "git_creds"
+            "url": "urlInput",
+            "credentialsId": "credInput"
          }
       },
       "branches": {
@@ -47,7 +47,7 @@ module.exports = {
          }
       ],
       "hudson.tasks.Shell": {
-         "command": "curl -v -u admin:admin@123 --upload-file target/sparkjava-hello-world-1.0.war http://localhost:8081/repository/java-repo/sparkjava-hello-world/sparkjava-hello-world/1.0.0/sparkjava-hello-world-1.0.0.war",
+         "command": "repoUploadCURL",
          "configuredLocalRules": []
       }
    },
@@ -71,13 +71,13 @@ module.exports = {
 //11efea4c1c5d355b062e8d9a0938cdc3ec jenkins token
 
 
-/* curl -X POST 'http://localhost:8080/credentials/store/system/domain/_/createCredentials' --data-urlencode 'json={
+/* curl -X POST 'http://surendhar:11efea4c1c5d355b062e8d9a0938cdc3ec@localhost:8080/credentials/store/system/domain/_/createCredentials' --data-urlencode 'json={
   "credentials": {
     "scope": "GLOBAL",
     "id": "apicredentials",
-    "username": "apicredentials",
+    "username": "apicreds",
     "password": "P@$$W0rd",
     "description": "apicredentials",
     "stapler-class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
   }
-}' --user surendhar:11efea4c1c5d355b062e8d9a0938cdc3ec */
+}' */

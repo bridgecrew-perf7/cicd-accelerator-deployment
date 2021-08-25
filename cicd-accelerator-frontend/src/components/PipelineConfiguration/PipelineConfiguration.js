@@ -307,7 +307,8 @@ export default class PipelineConfiguration extends Component {
 				"scm": {
 					"scmURL": this.state.scmURL,
 					"scmUsername": this.state.scmUsername,
-					"scmPassword": this.state.scmPassword	
+					"scmPassword": this.state.scmPassword,
+					"scmCredId": this.state.scmCredId
 				},
 				"technology": this.state.technology,
 				"buildToolName": this.state.buildToolName,				
