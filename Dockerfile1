@@ -10,4 +10,6 @@ ADD cicd-accelerator-backend cicd-accelerator-backend
 
 EXPOSE 3001 3000
 
+RUN mkdir -p /var/log/supervisor
+
 CMD ["supervisord", "-c", "/root/supervisor.conf"]
