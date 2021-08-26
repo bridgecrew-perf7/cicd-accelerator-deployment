@@ -109,11 +109,19 @@ module.exports = {
 		var buildServerName = pipelineInputs.data.buildServerName		
 		db.addPipelineDetails(pipelineName, buildServerName, pipelineInputs, function(pass, fail) {
 			if(pass) {
-				var out = pipelineName+" has been inserted into the db"
-				res.end(out)
+				core.addPipelineDetails(pass, pipelineInputs, function(trigger_pass, trigger_fail) {
+					if(trigger_pass) {
+						console.log(trigger_pass)
+						res.end(trigger_pass)
+					}
+					else {
+						console.log(trigger_fail)
+						res.end(trigger_fail)
+					}
+				})
 			}
 			else {
-				console.log(fail)
+				console.log(fail) 
 				res.end(fail)
 			}
 		})

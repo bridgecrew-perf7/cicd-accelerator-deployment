@@ -279,7 +279,7 @@ export default class PipelineConfiguration extends Component {
 	}
 	setfileName = (e) =>{
 		this.setState({
-			version: document.getElementById('fileName').value
+			fileName: document.getElementById('fileName').value
 		})
 	}
 	

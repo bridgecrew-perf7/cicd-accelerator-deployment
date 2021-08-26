@@ -7,10 +7,8 @@ module.exports = {
    "properties": [],
    "scm": {
       "@": {
-		"plugin": "git@4.8.1",  
-	  },
-	  "@": {
-		  "class": "hudson.plugins.git.GitSCM"
+		"plugin": "git@4.8.1",
+		"class": "hudson.plugins.git.GitSCM"		
 	  },
       "configVersion": "2",
       "userRemoteConfigs": {

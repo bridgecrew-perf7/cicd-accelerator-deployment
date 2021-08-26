@@ -84,7 +84,7 @@ module.exports = {
 		})
 	},
 	addPipelineDetails: function(pipelineName, buildServerName, pipelineInputs, callback) {
-		console.log((pipelineInputs.data.pipelineInputs))
+		//console.log((pipelineInputs.data.pipelineInputs))
  		connection.query("insert into pipelineDetails (buildServer, pipelineName, pipelineInputs) values ('"+buildServerName+"', '"+pipelineName+"', '"+JSON.stringify(pipelineInputs.data.pipelineInputs)+"')", function(err, stdout) {
 			if(err) {
 				console.log(err)
@@ -92,7 +92,20 @@ module.exports = {
 			}
 			else {
 				console.log(pipelineName+" has been inserted into pipelineDetails")
-				callback("Inserted", null)
+				connection.query("select a.username, a.password, a.serverURL from buildServer a, pipelineDetails b where a.serverName = b.buildServer and a.serverName ='"+buildServerName+"'", function(sererr, serout) {
+					if(sererr) {
+						console.log(sererr)
+					}
+					else {
+						console.log(serout)
+						var ser_obj = {
+							"buildServerURL": serout[0].serverURL,
+							"buildServerUsername": serout[0].username,
+							"buildServerPassword": serout[0].password
+						}						
+						callback(ser_obj, null)
+					}
+				})
 			}
 		})
 	},
