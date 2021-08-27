@@ -22,13 +22,14 @@ module.exports = {
 		console.log(url)
 		var jenkins = require('jenkins')({ baseUrl: url, crumbIssuer: true });						  
         //values.pipelineInputs.repoInputs.fileName = "sparkjava-hello-world"
-		var command = "curl -v -u "+values.data.pipelineInputs.repoInputs.repoUsername+':'+values.data.pipelineInputs.repoInputs.repoPassword+' --upload-file target/'+values.data.pipelineInputs.repoInputs.fileName+'.'+values.data.pipelineInputs.repoInputs.packagingFormat+' '+values.data.pipelineInputs.repoInputs.repoURL+'/'+values.data.pipelineInputs.repoInputs.groupId+'/'+values.data.pipelineInputs.repoInputs.artifactId+'/'+values.data.pipelineInputs.repoInputs.version+'/'+values.data.pipelineInputs.repoInputs.fileName+'-'+values.data.pipelineInputs.repoInputs.version+'.'+values.data.pipelineInputs.repoInputs.packagingFormat		  
+		var command = "curl -v -u "+values.data.pipelineInputs.repoInputs.repoUsername+':'+values.data.pipelineInputs.repoInputs.repoPassword+' --upload-file target/'+values.data.pipelineInputs.repoInputs.fileName+'.'+values.data.pipelineInputs.repoInputs.packagingFormat+' '+values.data.pipelineInputs.repoInputs.repoURL+'/'+values.data.pipelineInputs.repoInputs.groupId+'/'+values.data.pipelineInputs.repoInputs.artifactId+'/'+values.data.pipelineInputs.repoInputs.version+'/'+values.data.pipelineInputs.repoInputs.artifactId+'-'+values.data.pipelineInputs.repoInputs.version+'.'+values.data.pipelineInputs.repoInputs.packagingFormat		  
+		console.log(command);
 		congfigjson.json.scm.userRemoteConfigs["hudson.plugins.git.UserRemoteConfig"].url = values.data.pipelineInputs.scm.scmURL
 		congfigjson.json.scm.userRemoteConfigs["hudson.plugins.git.UserRemoteConfig"].credentialsId = 'git_creds'  		
 		congfigjson.json.builders["hudson.tasks.Shell"].command = command				
 		var xml = js2xmlparser.parse("project", congfigjson.json)
 		var pipelineName = values.data.pipelineName	
-       	jenkins.job.create(pipelineName, xml, function(err) {
+        	jenkins.job.create(pipelineName, xml, function(err) {
 			if(err) {
 				console.log(err)
 			}
@@ -42,14 +43,35 @@ module.exports = {
 		
 	},
 	triggerPipeline: function(values, callback) {
-		var url = 'http://'+values.buildServerUsername+':'+(values.buildServerPassword)+'@'+values.buildSeverURL			
+		var url = 'http://'+values.buildServerUsername+':'+encodeURI(values.buildServerPassword)+'@'+values.buildSeverURL			
 		var jenkins = require('jenkins')({ baseUrl: url, crumbIssuer: true });	
-
+		var pipelineName = values.pipelineName
 		jenkins.job.build(pipelineName, function(build_err, build_data) {
 			  if (build_err) throw build_err;
 				 
 			  console.log('queue item number', build_data);
 		});		
+
+	},
+	
+	deletePipeline: function(serverInputs, callback) {
+		console.log('In core.js')
+		console.log('In deletePipeline method')
+		console.log(serverInputs)
+		var url = 'http://'+serverInputs.buildServerUsername+':'+encodeURI(serverInputs.buildServerPassword)+'@'+serverInputs.buildServerURL
+		console.log(url)
+		var jenkins = require('jenkins')({ baseUrl: url, crumbIssuer: true });						  
+		var pipelineName= serverInputs.pipelineName
+		jenkins.job.destroy(pipelineName, function(err) {
+			if(err) {
+				console.log(err);
+				callback(null, err)
+			}
+			else {
+				console.log('Job has been deleted successfully')
+				callback('Job Deleted', null)
+			}
+		})
 
 	}
 

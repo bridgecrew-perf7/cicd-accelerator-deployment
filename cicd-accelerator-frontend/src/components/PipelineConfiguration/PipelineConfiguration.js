@@ -226,7 +226,7 @@ export default class PipelineConfiguration extends Component {
 	
 	setPipelineName = (e) => {
 		this.setState({
-			pipelineName: e.target.value
+			pipelineName: document.getElementById('pipelineName').value
 		})
 	}
 	
@@ -329,7 +329,8 @@ export default class PipelineConfiguration extends Component {
 					"packagingFormat": this.state.packagingFormat     
 				} 
 			}
-		}		
+		}
+		console.log(this.pipelineConf)
 		axios.post('http://localhost:3001/api/addPipelineDetails', {
 			data: this.pipelineConf
 		})

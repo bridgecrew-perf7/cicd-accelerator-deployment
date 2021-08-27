@@ -133,6 +133,34 @@ module.exports = {
 			}
 		})
 	},
+	getPipelineInfo: function(pipelineName, callback) {
+		console.log('In getPipelineInfo method')
+		var pipelineDetails = []
+		var obj = {}
+		connection.query('select buildServer from pipelineDetails where pipelineName = "'+pipelineName+'"', function(err, data) {
+			if(err) {
+				console.log(err)
+			}
+			else {
+				var buildServer = data[0].buildServer
+				connection.query('select * from buildServer where serverName = "'+buildServer+'"', function(ser_err, ser_data) {
+					if(ser_err) {
+						console.log(ser_err)
+						callback(null, ser_err)
+					}
+					else {						
+						obj = {
+							"buildServerUsername": ser_data[0].username,
+							"buildServerPassword": ser_data[0].password,
+							"buildServerURL": ser_data[0].serverURL,
+							"pipelineName": pipelineName
+						}						
+						callback(obj, err)
+					}
+				})
+			}
+		})
+	},
 	getPipelines: function(callback) {
 		var pipelines = []
 		var obj = {}

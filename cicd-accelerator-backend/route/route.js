@@ -91,15 +91,30 @@ module.exports = {
 	},
 	deletePipeline: function(req, res) {
 		var pipelineName = req.params.name
-		db.deletePipeline(pipelineName, function(pass, fail) {
-			if(pass) {
-				//console.log(JSON.stringify(pass))
-				res.end((pass))
+		console.log('In deletePipeline method')
+		db.getPipelineInfo(pipelineName, function(info_pass, info_fail) {
+			if(info_pass) {
+				core.deletePipeline(info_pass, function(del_pass, del_fail){
+					if(del_pass){
+						db.deletePipeline(pipelineName, function(pass, fail) {
+							if(pass) {				
+								res.end((pass))
+							}
+							else {
+								console.log(fail)
+								res.end(fail)
+							}			
+						})				
+					}
+					else {
+						console.log(del_fail)
+						res.end(del_fail)
+					}
+				})				
 			}
 			else {
-				console.log(fail)
-				res.end(fail)
-			}			
+				console.log(info_fail)
+			}
 		})
 	},
 	
