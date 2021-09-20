@@ -11,6 +11,18 @@ metadata:
 
 ---
 
+apiVersion: v1
+data:
+  PASSWORD: YWRtaW5AMTIz
+  USERNAME: cm9vdA==
+kind: Secret
+metadata:
+  name: sqldb-secret
+  namespace: cicd-accelerator
+type: Opaque
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
@@ -29,7 +41,7 @@ spec:
         app: cicd-image
     spec: 
       containers: 
-        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.0"
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.4"
           name: cicd-image
           ports: 
             - containerPort: 3000
@@ -47,6 +59,16 @@ spec:
               configMapKeyRef:
                 name: cicd-config
                 key: url
+          - name: USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: sqldb-secret
+                key: USERNAME
+          - name: PASSWORD
+            valueFrom: 
+              secretKeyRef:
+                name: sqldb-secret
+                key: PASSWORD                
                 
 
 ---

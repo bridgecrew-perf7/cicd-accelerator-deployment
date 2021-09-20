@@ -71,7 +71,7 @@ module.exports = {
 
 //curl -v -u admin:admin@123 --upload-file sparkjava-hello-world-1.0.war http://localhost:8081/repository/java-repo/sparkjava-hello-world/sparkjava-hello-world/1.0.2/sparkjava-hello-world-1.0.0.war
 
-//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 git token
+//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 git token
 
 //11efea4c1c5d355b062e8d9a0938cdc3ec jenkins token
 

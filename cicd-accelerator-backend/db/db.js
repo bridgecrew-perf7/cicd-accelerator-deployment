@@ -1,9 +1,9 @@
 var mysql      = require('mysql');
 
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'admin@123',
+  host     : '172.18.0.2',
+  user     : process.env.USERNAME,
+  password : process.env.PASSWORD,
   database : 'cicd_accelerator'
 });
 

@@ -18,8 +18,8 @@ app.use(function(req, res, next) {
 
 app.use(express.json())
 
-app.get('/', (req, res) => {
-	res.end('Got the resp')
+app.post('/', (req, res) => {
+	console.log(req)
 })
 
 app.get('/api/checkUser', routedata.checkUser);
@@ -43,7 +43,7 @@ app.delete('/api/deletePipeline/:name', routedata.deletePipeline)
 app.get('/api/triggerPipeline/:name', routedata.triggerPipeline)
 
 app.get('/monument', (req, res) => {
-	res.end('Surendhar Statue')
+	res.end(process.env.USERNAME)
 })
 
 app.listen(port, () => {
