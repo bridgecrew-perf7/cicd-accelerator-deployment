@@ -22,80 +22,29 @@ export default class Dashboard extends Component {
 			isVisible: false,
 			pipelineName: "",
 			username: "",
-			pipelines: [
-				{
-					"name": "cnap_test_pipeline",
-					"buildServer": "CNAP_Build_Server",
-					"isSuccess": "failed",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "failed"
-					}]
-				},
-				{
-					"name": "cnap_sample_pipeline",
-					"buildServer": "CNAP_Build_Server",
-					"isSuccess": "succeeded",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "success"
-					}]					
-				},
-				{
-					"name": "wipro_test_pipeline",
-					"buildServer": "Wipro_Build_Server",
-					"isSuccess": "failed",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "success"
-					}]
-				},
-				{
-					"name": "wipro_sample_pipeline",
-					"buildServer": "Wipro_Build_Server",
-					"isSuccess": "succeeded",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "success"
-					}]
-				},
-				{
-					"name": "wipro_new_pipeline",
-					"buildServer": "Wipro_Build_Server",
-					"isSuccess": "inprogress",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "inprogress"
-					}]					
-				}				
-			],
-			pipeline: []
+			pipelines: [],
+			pipelineLogs: ""
 			
 		}
 	}
 	
 	modalDisplay = (e) => {
+		axios.get('http://localhost:3001/api/getPipelineLogs/'+e.name)
+		.then(res => {
+			console.log(res.data)
+			 this.setState({
+				pipelineLogs: res.data
+			})
+		})		
 		this.setState({
 			isVisible: true
 		})
 		this.setState({
 			pipelineName: e.name
 		})
-		var pipelineDetails = {
-			"gitPull": e.stages[0].gitPull,
-			"mvnBuild": e.stages[0].mvnBuild,
-			"packaging": e.stages[0].packaging			
-		}
-		//console.log(pipelineDetails)
 		
-		this.state.pipeline.push(pipelineDetails)
 		
-		//console.log(this.state.pipeline)
+		
 	}
 	
 	handleClose = () => {
@@ -104,7 +53,17 @@ export default class Dashboard extends Component {
 		})
 		
 		this.setState({
-			pipeline: []
+			pipelineLogs: ""
+		})
+	}
+	
+	componentDidMount(){
+		axios.get('http://localhost:3001/api/getPipelines')
+		.then(res => {
+			//console.log(res.data)
+			 this.setState({
+				pipelines: res.data
+			})
 		})
 	}
 	
@@ -115,25 +74,11 @@ export default class Dashboard extends Component {
 		
 		console.log((this.state.pipeline))
 		
-		const pipelineStages = this.state.pipeline.map((item, index) =>				
-		<div>
- 			<Stepper> 
-				<Step active={item.gitPull === "success" ? true : false}>
-					<StepLabel> GitPull </StepLabel>
-				</Step>
-				<Step active={item.mvnBuild === "success" ? true : false}>
-					<StepLabel> MVN Build </StepLabel>
-				</Step>				
-				<Step active={item.packaging === "packaging" ? true : false}>
-					<StepLabel> Packaging </StepLabel>
-				</Step>					
-			</Stepper>			
-		</div>
-		)
+
 		
 		return (
 			<div>
-				<center>
+ 				<center>
 					<TableContainer component={Paper}>
 					  <Table aria-label="simple table">
 						<TableHead>
@@ -184,8 +129,10 @@ export default class Dashboard extends Component {
 				  <Modal
 					show={this.state.isVisible}
 					onHide={this.handleClose}
-					backdrop="static"
-					keyboard={false}
+					backdrop={true}
+					keyboard={true}
+					fullscreen={true}
+					size='xl'
 				  >
 					<Modal.Header closeButton>
 					  <Modal.Title>{ this.state.pipelineName } details</Modal.Title>
@@ -193,7 +140,7 @@ export default class Dashboard extends Component {
 					<Modal.Body id="modalBody">
 						<center>
 							<div>
-								{ pipelineStages }
+								{ this.state.pipelineLogs }
 							</div>
 						</center>
 					</Modal.Body>

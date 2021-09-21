@@ -41,7 +41,8 @@ spec:
         app: cicd-image
     spec: 
       containers: 
-        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.4"
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.5"
+          imagePullPolicy: Always
           name: cicd-image
           ports: 
             - containerPort: 3000

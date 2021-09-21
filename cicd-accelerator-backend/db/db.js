@@ -1,9 +1,9 @@
 var mysql      = require('mysql');
 
 var connection = mysql.createConnection({
-  host     : '172.18.0.2',
-  user     : process.env.USERNAME,
-  password : process.env.PASSWORD,
+  host     : 'localhost',//'172.18.0.2',
+  user     : 'root',//process.env.USERNAME,
+  password : 'admin@123',//process.env.PASSWORD,
   database : 'cicd_accelerator'
 });
 
@@ -173,14 +173,48 @@ module.exports = {
 				console.log(stdout)
  				for(var i=0;i<stdout.length;i++) {								
 					obj = {
-						"serverName": stdout[i].buildServer,
-						"pipelineName": stdout[i].pipelineName,
+						"buildServer": stdout[i].buildServer,
+						"name": stdout[i].pipelineName,
+						"isSuccess": stdout[i].isSuccess,
 						"id": stdout[i].SNo
 					}
 					pipelines.push(obj)
 				}
 				console.log(pipelines)
 				callback((pipelines), null)
+			}
+		})		
+	},
+	getPipelineLogs: function(pipelineName, callback) {
+		var obj = {}
+		//console.log('select * from pipelineDetails where pipelineName = "'+pipelineName+'"')
+		connection.query('select * from pipelineDetails where pipelineName = "'+pipelineName+'"', function(err, stdout) {
+			if(err) {
+				console.log(err)
+				callback(err, null)
+			}
+			else {
+				console.log(stdout)
+ 				var buildServer = stdout[0].buildServer				
+				connection.query('select * from buildServer where serverName ="'+buildServer+'"', function(sererr, serout) {
+					if(sererr) {
+						console.log(sererr)
+						callback(sererr, null)
+					}
+					else {
+						var buildServerURL = serout[0].serverURL
+						var buildServerUsername = serout[0].username
+						var buildServerPassword = serout[0].password
+						obj = {
+							"buildSeverURL": buildServerURL,
+							"pipelineName": pipelineName,
+							"buildServerUsername": buildServerUsername,
+							"buildServerPassword": buildServerPassword							
+						}
+						//console.log("Inside db.js", obj);
+						callback(obj, null)
+					}
+				})
 			}
 		})		
 	},

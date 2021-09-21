@@ -75,7 +75,7 @@ export default class AccordionList extends Component {
 		)
 		
 		const pipeline = this.state.pipelines.map((item, index) => 
-			<p key={index}> {item.pipelineName} <span><a href="/pipelineConfiguration" ><EditIcon style={{ color: "green" }}></EditIcon></a></span> <span><PlayCircleFilledIcon style={{ color: "green" }} onClick={(e) => axios.get('http://localhost:3001/api/triggerPipeline/'+item.pipelineName).then(res => {console.log(res)})}/></span> <span><CancelIcon color='error' onClick={(e) => axios.delete('http://localhost:3001/api/deletePipeline/'+item.pipelineName).then(res => {console.log(res)})}/></span></p>
+			<p key={index}> {item.name} <span><a href="/pipelineConfiguration" ><EditIcon style={{ color: "green" }}></EditIcon></a></span> <span><PlayCircleFilledIcon style={{ color: "green" }} onClick={(e) => axios.get('http://localhost:3001/api/triggerPipeline/'+item.name).then(res => {console.log(res)})}/></span> <span><CancelIcon color='error' onClick={(e) => axios.delete('http://localhost:3001/api/deletePipeline/'+item.name).then(res => {console.log(res)})}/></span></p>
 		)
 		const deployServer = this.state.deployServers.map((item, index) => 
 			<p key={index}> {item.name} <span><CancelIcon color='error' onClick={() => alert(`${item.name} is getting deleted`)}/></span></p>

@@ -75,6 +75,28 @@ module.exports = {
 			}			
 		})
 	},
+	getPipelineLogs: function(req, res) {
+		var pipelineName = req.params.pipelineName
+		console.log(pipelineName)
+ 		db.getPipelineLogs(pipelineName, function(pass, fail) {
+			if(pass) {			
+				core.getPipelineLogs(pass, function(log_pass, log_fail) {
+					if(log_pass) {
+						console.log('In route.js')
+						res.end(log_pass)
+					}
+					else {
+						console.log(log_fail)
+					}
+				})
+			}
+			else {
+				console.log(fail)
+				res.end(fail)
+			}
+		})
+	},
+	
 
 	deleteBuildServer: function(req, res) {
 		var buildServerName = req.params.name

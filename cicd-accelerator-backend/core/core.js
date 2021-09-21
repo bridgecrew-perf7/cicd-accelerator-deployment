@@ -53,7 +53,28 @@ module.exports = {
 		});		
 
 	},
-	
+	getPipelineLogs: function(values, callback) {
+		var url = 'http://'+values.buildServerUsername+':'+encodeURI(values.buildServerPassword)+'@'+values.buildSeverURL			
+		var jenkins = require('jenkins')({ baseUrl: url, crumbIssuer: true });	
+		var pipelineName = values.pipelineName
+		console.log(pipelineName)
+		jenkins.job.get(pipelineName, function(get_err, get_data) {
+			if(get_err) {
+				console.log(get_err)
+			}
+			else {
+				var latestBuild = get_data.builds.length
+ 				jenkins.build.log(pipelineName,latestBuild, function(log_err, log_data) {
+					  if (log_err) throw callback(null, log_err);
+						 
+					  //console.log('Log_data', log_data);
+					  callback(log_data, null)
+				});					
+			}
+		})
+	},
+
+
 	deletePipeline: function(serverInputs, callback) {
 		console.log('In core.js')
 		console.log('In deletePipeline method')
