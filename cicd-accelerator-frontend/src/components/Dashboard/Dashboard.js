@@ -21,6 +21,7 @@ export default class Dashboard extends Component {
 		this.state = {
 			isVisible: false,
 			pipelineName: "",
+			buildNumber: "",
 			username: "",
 			pipelines: [],
 			pipelineLogs: ""
@@ -33,8 +34,11 @@ export default class Dashboard extends Component {
 		.then(res => {
 			console.log(res.data)
 			 this.setState({
-				pipelineLogs: res.data
+				pipelineLogs: res.data[0].log_data
 			})
+			this.setState({
+				buildNumber: res.data[0].latestBuild
+			})			
 		})		
 		this.setState({
 			isVisible: true
@@ -70,9 +74,6 @@ export default class Dashboard extends Component {
 
 	
 	render() {
-				
-		
-		console.log((this.state.pipeline))
 		
 
 		
@@ -135,7 +136,7 @@ export default class Dashboard extends Component {
 					size='xl'
 				  >
 					<Modal.Header closeButton>
-					  <Modal.Title>{ this.state.pipelineName } details</Modal.Title>
+					  <Modal.Title>#{ this.state.buildNumber } { this.state.pipelineName } details</Modal.Title>
 					</Modal.Header>
 					<Modal.Body id="modalBody">
 						<center>

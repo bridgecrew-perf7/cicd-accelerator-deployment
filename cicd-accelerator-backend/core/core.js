@@ -68,7 +68,12 @@ module.exports = {
 					  if (log_err) throw callback(null, log_err);
 						 
 					  //console.log('Log_data', log_data);
-					  callback(log_data, null)
+					  var obj = [{
+						  'log_data': log_data,
+						  'latestBuild': latestBuild
+					  }]
+					  //console.log('obj', obj)
+					  callback(obj, null)
 				});					
 			}
 		})

@@ -83,7 +83,8 @@ module.exports = {
 				core.getPipelineLogs(pass, function(log_pass, log_fail) {
 					if(log_pass) {
 						console.log('In route.js')
-						res.end(log_pass)
+						console.log(log_pass)
+						res.end(JSON.stringify(log_pass))
 					}
 					else {
 						console.log(log_fail)
