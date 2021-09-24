@@ -16,7 +16,9 @@ WORKDIR /
 
 WORKDIR cicd-accelerator-frontend
 
-#RUN npm install
+RUN npm install
+
+RUN npm audit fix
 
 WORKDIR /
 
