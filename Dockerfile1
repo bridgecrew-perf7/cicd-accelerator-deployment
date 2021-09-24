@@ -6,15 +6,15 @@ RUN apk add nodejs npm curl supervisor
 
 ADD cicd-accelerator-frontend cicd-accelerator-frontend
 
-WORKDIR cicd-accelerator-frontend
+ADD cicd-accelerator-backend cicd-accelerator-backend
+
+WORKDIR cicd-accelerator-backend
 
 RUN npm install
 
 WORKDIR /
 
-ADD cicd-accelerator-backend cicd-accelerator-backend
-
-WORKDIR cicd-accelerator-backend
+WORKDIR cicd-accelerator-frontend
 
 RUN npm install
 
