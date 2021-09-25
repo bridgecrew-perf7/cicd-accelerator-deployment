@@ -16,9 +16,7 @@ WORKDIR /
 
 WORKDIR cicd-accelerator-frontend
 
-CMD ["npm", "run", "build"]
-
-CMD ["serve", "-s", "build"]
+RUN npm install
 
 WORKDIR /
 
