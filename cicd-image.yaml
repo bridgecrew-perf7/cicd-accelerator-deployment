@@ -41,7 +41,7 @@ spec:
         app: cicd-image
     spec: 
       containers: 
-        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.6"
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.8"
           imagePullPolicy: Always
           name: cicd-image
           ports: 
@@ -86,10 +86,10 @@ spec:
   ports:
   - port: 3003 #port accessing in the server
     protocol: TCP
-    targetPort: 3000 #port exposed in docker container
+    targetPort: 5000 #port exposed in docker container
   selector:
     app: cicd-image
-  type: LoadBalancer #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
+  type: ClusterIP #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
 
     
 ---
@@ -109,7 +109,7 @@ spec:
     targetPort: 3001 #port exposed in docker container
   selector:
     app: cicd-image
-  type: LoadBalancer  #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
+  type: ClusterIP  #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
 
     
 ---
