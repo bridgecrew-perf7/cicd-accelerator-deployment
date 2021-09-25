@@ -18,6 +18,10 @@ WORKDIR cicd-accelerator-frontend
 
 RUN npm install
 
+RUN npm run build
+
+RUN serve -s build
+
 WORKDIR /
 
 EXPOSE 3001 5000
