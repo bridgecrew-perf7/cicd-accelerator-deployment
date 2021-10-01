@@ -40,42 +40,32 @@ export default class Login extends Component {
 	
 	componentDidMount() {
 		sessionStorage.clear()
-/* 		axios.get('http://localhost:3000/')
+ 		axios.get('http://localhost:3001/')
 		.then(resp => {
 			console.log(resp)
 			if(resp.data === null || resp.data === undefined) {
-				console.log('Backend service not available')
-			} 
-		}) */
+				alert('Backend service not available')
+			}
+		})
 	}
 	
 	submit = () => {
-		axios.get('http://localhost:3000/api/checkUser', {
+		axios.get('http://localhost:3001/api/checkUser', {
 			params: {
 				username: this.state.username,
 				password: this.state.password
 			}
 		}).then(resp => {
-			//console.log(resp.data)
-			if(resp.data == "Authorized") {
+			console.log(resp.data)
+			if(resp.data == "Authorized") {				
 				this.props.history.push('/home', {username: this.state.username})
 				console.log(this.props.history.location.state.username)
-				sessionStorage.setItem('name', this.state.username);
+				sessionStorage.setItem('name', this.props.history.location.state.username);
 			}
 			else {
-				alert(resp.data)
-				//console.log('')
+				alert('Username or password is incorrect')				
 			}
 		})
-/* 		if(this.state.username === 'admin' && this.state.password === 'admin') {
-			this.props.history.push('/home', {username: this.state.username})
-			console.log(this.props.history.location.state.username)
-			sessionStorage.setItem('name', this.state.username);
-			
-		}
-		else {
-			console.log('Login failed')
-		} */
 	}
 	
 	render() {

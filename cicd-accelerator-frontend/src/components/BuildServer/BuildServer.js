@@ -55,23 +55,34 @@ export default class BuildServer extends Component {
 		const data = this.buildServerDetails
 		
 		console.log(data)
-		axios.post('http://localhost:3000/api/addBuildServer', {data})
-		.then(res => {
+  		axios.get('http://localhost:3001/api/addBuildServer', {
+			params: {
+				data: data
+			}
+		}).then(res => {
 			console.log(res)
 		})
 		
 		this.buildServerDetails = []
 	}
 	
-	checkServerName = () => {
+	checkServerName = (e) => {		
 		this.buildServerName = document.getElementById('formBasicServerName').value
-		//alert(buildServerName)
+		console.log(this.buildServerName)		
 		
 		const data = this.buildServerName
 		
-	axios.post('http://localhost:3000/api/checkServerName', {data})
-		.then(res => {
-			console.log(res)
+	axios.get('http://localhost:3001/api/checkServerName', {
+		params: {
+			serverName: this.buildServerName
+		}
+	}).then(res => {			
+			if(res.data === "Exist") {
+				alert('Server Name '+this.buildServerName+' is already available in database.')
+			}
+			else {
+				alert('Server Name '+this.buildServerName+' is not available in database.')
+			}
 		})
 	}
 	
@@ -84,7 +95,7 @@ export default class BuildServer extends Component {
 				<Grid item xs={12}>
 					<Paper style={ header }>
 						<center>
-							<p style={{ padding: "25px 0px" }}>CNAP Build Server Configuration</p>
+							<p style={{ padding: "25px 0px" }}><span style={{ fontSize:"25px", fontWeight: "500" }}>CNAP Build Server</span></p>
 						</center>
 					</Paper>
 				</Grid>				
@@ -95,6 +106,15 @@ export default class BuildServer extends Component {
 			</Grid>	
 			<Grid item xs={9}>
 					<Form style={ form }>
+					  <Form.Group as={Row} controlId="formBasicServerName">
+						<Form.Label column sm="3">
+						  Server Name
+						</Form.Label>
+						<Col sm="5">
+						  <Form.Control type="text" placeholder="Enter server name" onChange={this.changeHandler} onBlur={this.checkServerName}/>
+						</Col>
+					  </Form.Group>
+					  
 					  <Form.Group as={Row} controlId="formPlaintextURL">
 						<Form.Label column sm="3">
 						  Build Server URL
@@ -121,15 +141,7 @@ export default class BuildServer extends Component {
 						  <Form.Control type="password" placeholder="Enter jenkins password" onChange={this.changeHandler}/>
 						</Col>
 					  </Form.Group>
-
-					  <Form.Group as={Row} controlId="formBasicServerName">
-						<Form.Label column sm="3">
-						  Server Name
-						</Form.Label>
-						<Col sm="5">
-						  <Form.Control type="text" placeholder="Enter server name" onChange={this.changeHandler} onBlur={this.checkServerName}/>
-						</Col>
-					  </Form.Group>					  
+					  
 					  <Col lg="10">
 						<Button onClick={this.submit} > Submit </Button>
 					  </Col>

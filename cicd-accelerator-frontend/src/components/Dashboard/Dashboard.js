@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button'
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import axios from 'axios'
 
 export default class Dashboard extends Component {
 	
@@ -20,97 +21,34 @@ export default class Dashboard extends Component {
 		this.state = {
 			isVisible: false,
 			pipelineName: "",
+			buildNumber: "",
 			username: "",
-			buildServers: [
-				{
-					"name": "CNAP_Build_Server",
-					"id": 1
-				},
-				{
-					"name": "Wipro_Build_Server",
-					"id": 2
-				}
-			],
-			pipelines: [
-				{
-					"name": "cnap_test_pipeline",
-					"buildServer": "CNAP_Build_Server",
-					"isSuccess": "failed",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "failed",
-						"testing": "None"
-					}]
-				},
-				{
-					"name": "cnap_sample_pipeline",
-					"buildServer": "CNAP_Build_Server",
-					"isSuccess": "succeeded",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "success",
-						"testing": "success"
-					}]					
-				},
-				{
-					"name": "wipro_test_pipeline",
-					"buildServer": "Wipro_Build_Server",
-					"isSuccess": "failed",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "success",
-						"testing": "failed"
-					}]
-				},
-				{
-					"name": "wipro_sample_pipeline",
-					"buildServer": "Wipro_Build_Server",
-					"isSuccess": "succeeded",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "success",
-						"testing": "success"
-					}]
-				},
-				{
-					"name": "wipro_new_pipeline",
-					"buildServer": "Wipro_Build_Server",
-					"isSuccess": "inprogress",
-					"stages": [{
-						"gitPull": "success",
-						"mvnBuild": "success",
-						"packaging": "inprogress",
-						"testing": "None"
-					}]					
-				}				
-			],
-			pipeline: []
+			pipelines: [],
+			pipelineLogs: ""
 			
 		}
-	}	
+	}
 	
 	modalDisplay = (e) => {
+		axios.get('http://localhost:3001/api/getPipelineLogs/'+e.name)
+		.then(res => {
+			console.log(res.data)
+			 this.setState({
+				pipelineLogs: res.data[0].log_data
+			})
+			this.setState({
+				buildNumber: res.data[0].latestBuild
+			})			
+		})		
 		this.setState({
 			isVisible: true
 		})
 		this.setState({
 			pipelineName: e.name
 		})
-		var pipelineDetails = {
-			"gitPull": e.stages[0].gitPull,
-			"mvnBuild": e.stages[0].mvnBuild,
-			"packaging": e.stages[0].packaging,
-			"testing": e.stages[0].testing
-		}
-		//console.log(pipelineDetails)
 		
-		this.state.pipeline.push(pipelineDetails)
 		
-		//console.log(this.state.pipeline)
+		
 	}
 	
 	handleClose = () => {
@@ -119,7 +57,17 @@ export default class Dashboard extends Component {
 		})
 		
 		this.setState({
-			pipeline: []
+			pipelineLogs: ""
+		})
+	}
+	
+	componentDidMount(){
+		axios.get('http://localhost:3001/api/getPipelines')
+		.then(res => {
+			//console.log(res.data)
+			 this.setState({
+				pipelines: res.data
+			})
 		})
 	}
 	
@@ -127,30 +75,11 @@ export default class Dashboard extends Component {
 	
 	render() {
 		
-		console.log((this.state.pipeline))
-		
-		const pipelineStages = this.state.pipeline.map((item, index) =>				
-		<div>
- 			<Stepper> 
-				<Step active={item.gitPull === "success" ? true : false}>
-					<StepLabel> GitPull </StepLabel>
-				</Step>
-				<Step active={item.mvnBuild === "success" ? true : false}>
-					<StepLabel> MVN Build </StepLabel>
-				</Step>				
-				<Step active={item.packaging === "success" ? true : false}>
-					<StepLabel> Packaging </StepLabel>
-				</Step>	
-				<Step active={item.testing === "success" ? true : false}>
-					<StepLabel> Testing </StepLabel>
-				</Step>					
-			</Stepper>			
-		</div>
-		)
+
 		
 		return (
 			<div>
-				<center>
+ 				<center>
 					<TableContainer component={Paper}>
 					  <Table aria-label="simple table">
 						<TableHead>
@@ -201,16 +130,18 @@ export default class Dashboard extends Component {
 				  <Modal
 					show={this.state.isVisible}
 					onHide={this.handleClose}
-					backdrop="static"
-					keyboard={false}
+					backdrop={true}
+					keyboard={true}
+					fullscreen={true}
+					size='xl'
 				  >
 					<Modal.Header closeButton>
-					  <Modal.Title>{ this.state.pipelineName } details</Modal.Title>
+					  <Modal.Title>#{ this.state.buildNumber } { this.state.pipelineName } details</Modal.Title>
 					</Modal.Header>
 					<Modal.Body id="modalBody">
 						<center>
 							<div>
-								{ pipelineStages }
+								{ this.state.pipelineLogs }
 							</div>
 						</center>
 					</Modal.Body>

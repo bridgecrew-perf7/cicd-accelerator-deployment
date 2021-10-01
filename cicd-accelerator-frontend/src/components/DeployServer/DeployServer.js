@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import AccordionList from '../../AccordionList'
+import axios from 'axios'
 
 const header = {
 	backgroundColor: "wheat",
@@ -24,6 +25,18 @@ export default class DeployServer extends Component {
 		
 		this.state = {
 			setDeploymentType: "",
+			serverTag: [
+				{
+					"name": "Linux",
+					 "value": "linux",
+					 "id": 0
+				},
+				{
+					"name": "Windows",
+					 "value": "windows",
+					 "id": 1
+				}			
+			],
 			deploymentType: [
 				{
 					"id": 0,
@@ -39,7 +52,7 @@ export default class DeployServer extends Component {
 				}
 			],
 			pipelines: [
-				{
+				/* {
 					"name": "None",
 					"buildServer": "None"
 				},
@@ -58,7 +71,7 @@ export default class DeployServer extends Component {
 				{
 					"name": "wipro_sample_pipeline",
 					"buildServer": "Wipro_Build_Server"
-				}
+				} */
 			]
 		}
 	}
@@ -69,6 +82,15 @@ export default class DeployServer extends Component {
 		})
 	}
 	
+	componentDidMount() {
+		axios.get('http://localhost:3001/api/getPipelines')
+		.then(res => {
+			this.setState({
+				pipelines: res.data
+			})
+		})		
+	}	
+	
 	render() {
 		return (
 			<div>
@@ -76,7 +98,7 @@ export default class DeployServer extends Component {
 				<Grid item xs={12}>
 					<Paper style={ header }>
 						<center>
-							<p style={{ padding: "25px 0px" }}>CNAP DeployServer Configuration</p>
+							<p style={{ padding: "25px 0px" }}><span style={{ fontSize:"25px", fontWeight: "500" }}>CNAP DeployServer Configuration</span></p>
 						</center>
 					</Paper>
 				</Grid>				
@@ -101,9 +123,10 @@ export default class DeployServer extends Component {
 						</Form.Label>
 						<Col sm="5">
 						      <Form.Control as="select" custom onChange={this.clickEvent}>
+								<option> None </option>
 							  {
 								  this.state.pipelines.map(pipeline => 
-									<option> { pipeline.name } </option>
+									<option> { pipeline.pipelineName } </option>
 								  )
 							  }
 							</Form.Control>
@@ -132,6 +155,21 @@ export default class DeployServer extends Component {
 							  <Form.Control type="text" placeholder="Enter target server ip" />
 							</Col>
 						  </Form.Group>
+						  <Form.Group as={Row} controlId="formPlaintextEmail">
+							<Form.Label column sm="3">
+							  Server Tag
+							</Form.Label>
+							<Col sm="5">
+							  <Form.Control as="select" custom onChange={ this.getServerTag }>
+								  <option> None </option>	
+								  {
+									  this.state.serverTag.map(server => 											
+											<option> {server.name} </option>
+									  )
+								  }
+							  </Form.Control>
+							</Col>
+						  </Form.Group>							  
 						  <Form.Group as={Row} controlId="formPlaintextEmail">
 							<Form.Label column sm="3">
 							  Target Server Username

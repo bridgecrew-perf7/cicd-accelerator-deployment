@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import AccordionList from '../../AccordionList'
+import axios from 'axios'
 
 const header = {
 	backgroundColor: "wheat",
@@ -23,42 +24,38 @@ export default class PipelineConfiguration extends Component {
 	constructor() {
 		super()
 		
+		this.pipelineConf= {}
+		
 		this.state = {
 			isVisible: false,
+			repoVisible: false,
 			displayConf: "none",
 			technology: "null",
 			pipelineName: "",
 			buildServerName: "",
-			scmName: "",
 			scmURL: "",
 			scmUsername: "",
 			scmPassword: "",
+			scmBranch: "",
+			scmCredId: "",
 			technologyName: "",
 			buildToolName: "",
 			unitTestToolName: "",
 			packagingFormat: "",
 			repoURL: "",
-			scmList: [
-				{
-					"name": "None"
-				},
-				{
-					"name": "Git"
-				},				
-				{
-					"name": "BitBucket"
-				},				
-				{
-					"name": "Mercury"
-				}
-			],
+			repoUsername: "",
+			repoPassword: "",
+			groupId: "",
+			artifactId: "",
+			version: "",
+			fileName: "",
 			technologyList: [
 				{
 					"name": "None"
 				},
 				{
 					"name": "Java"
-				},
+				}/* ,
 				{
 					"name": "C"
 				},
@@ -67,7 +64,7 @@ export default class PipelineConfiguration extends Component {
 				},
 				{
 					"name": "Python"
-				}
+				} */
 			],
 			buildList: [	
 				{
@@ -136,7 +133,7 @@ export default class PipelineConfiguration extends Component {
 			],			
 			buildServers: [
 			
-				{
+				/* {
 					"name": "None",
 					"id": 0
 				},
@@ -147,10 +144,10 @@ export default class PipelineConfiguration extends Component {
 				{
 					"name": "Wipro_Build_Server",
 					"id": 2
-				}
+				} */
 			],
 			pipelines: [
-				{
+/* 				{
 					"name": "cnap_test_pipeline",
 					"buildServer": "CNAP_Build_Server"
 				},
@@ -165,7 +162,7 @@ export default class PipelineConfiguration extends Component {
 				{
 					"name": "wipro_sample_pipeline",
 					"buildServer": "Wipro_Build_Server"
-				}
+				} */
 			]
 		}
 	}
@@ -181,6 +178,11 @@ export default class PipelineConfiguration extends Component {
 			isVisible: true
 		})
 	}
+	repoShow = () => {
+		this.setState({
+			repoVisible: true
+		})
+	}
 	
 	setTechnology = (event) => {
 		this.setState({
@@ -191,6 +193,11 @@ export default class PipelineConfiguration extends Component {
 	handleClose = () => {
 		this.setState({
 			isVisible: false
+		})
+	}
+	repoClose = () => {
+		this.setState({
+			repoVisible: false
 		})
 	}
 	
@@ -204,13 +211,12 @@ export default class PipelineConfiguration extends Component {
 		this.setState({
 			scmPassword: document.getElementById('scmPassword').value
 		})
-	}	
-	
-	getSCMName = (e) => {
-		this.setState({
-			scmName: e.target.value
-		})		
 	}
+	setSCMCredId = () => {
+		this.setState({
+			scmCredId: document.getElementById('scmCredId').value
+		})
+	}	
 
 	getBuildServer = (e) => {
 		this.setState({
@@ -220,7 +226,7 @@ export default class PipelineConfiguration extends Component {
 	
 	setPipelineName = (e) => {
 		this.setState({
-			pipelineName: e.target.value
+			pipelineName: document.getElementById('pipelineName').value
 		})
 	}
 	
@@ -234,16 +240,100 @@ export default class PipelineConfiguration extends Component {
 			buildToolName: e.target.value
 		})
 	}
+	setPackageFormat = (e) => {
+		this.setState({
+			packagingFormat: e.target.value
+		})
+	}
+	
+	setRepositoryURL = (e) => {
+		this.setState({
+			repoURL: e.target.value
+		})
+	}
+	
+	setREPOUsername = (e) =>{
+		this.setState({
+			repoUsername: document.getElementById('repoUsername').value
+		})
+	}
+	setREPOPassword = (e) =>{
+		this.setState({
+			repoPassword: document.getElementById('repoPassword').value
+		})
+	}
+	setGroupId = (e) =>{
+		this.setState({
+			groupId: document.getElementById('groupId').value
+		})
+	}	
+	setArtifactId = (e) =>{
+		this.setState({
+			artifactId: document.getElementById('artifactId').value
+		})
+	}
+	setVersion = (e) =>{
+		this.setState({
+			version: document.getElementById('version').value
+		})
+	}
+	setfileName = (e) =>{
+		this.setState({
+			fileName: document.getElementById('fileName').value
+		})
+	}
+	
+	setSCMBranch = (e) => {
+		this.setState({
+			scmBranch: document.getElementById('scmBranch').value
+		})
+	}
+	
+	componentDidMount() {
+		axios.get('http://localhost:3001/api/getPipelines')
+		.then(res => {
+			this.setState({
+				pipelineName: res.data
+			})
+		})
+		
+		axios.get('http://localhost:3001/api/getBuildServers')
+		.then(res => {
+			this.setState({
+				buildServers: res.data
+			})
+		})		
+	}
 	
 	submit = () => {
-		console.log(this.state.buildServerName)
-		console.log(this.state.pipelineName)
-		console.log(this.state.scmName)
-		console.log(this.state.scmURL)
-		console.log(this.state.scmUsername)
-		console.log(this.state.scmPassword)
-		console.log(this.state.technology)
-		console.log(this.state.buildToolName)
+		this.pipelineConf = {
+			"pipelineName": this.state.pipelineName,
+			"buildServerName": this.state.buildServerName,
+			"pipelineInputs": {
+				"scm": {
+					"scmURL": this.state.scmURL,
+					"scmUsername": this.state.scmUsername,
+					"scmPassword": this.state.scmPassword,
+					"scmCredId": this.state.scmCredId
+				},
+				"technology": this.state.technology,
+				"buildToolName": this.state.buildToolName,				
+				"repoInputs": {
+					"repoURL": this.state.repoURL,
+					"repoUsername": this.state.repoUsername,
+					"repoPassword": this.state.repoPassword,
+					"groupId": this.state.groupId,
+					"artifactId": this.state.artifactId,
+					"version": this.state.version,
+					"fileName": this.state.fileName,
+					"packagingFormat": this.state.packagingFormat     
+				} 
+			}
+		}
+		console.log(this.pipelineConf)
+		axios.post('http://localhost:3001/api/addPipelineDetails', {
+			data: this.pipelineConf
+		})
 	}	
 	
 	render() {
@@ -276,14 +366,99 @@ export default class PipelineConfiguration extends Component {
 							  SCM Password
 							</Form.Label>
 							<Col sm="7">
-							  <Form.Control type="password" placeholder="Enter SCM password" onChange={this.setSCMPassword}/>
+							  <Form.Control type="password" placeholder="Enter SCM Password" onChange={this.setSCMPassword}/>
 							</Col>
 						  </Form.Group>
-						</Form>  
+						  <Form.Group as={Row} controlId="scmBranch">
+							<Form.Label column sm="5">
+							  SCM Branch
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter SCM Branch" onChange={this.setSCMBranch}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="scmCredId">
+							<Form.Label column sm="5">
+							  SCM Credentials Id
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter SCM Credentials" onChange={this.setSCMCredId}/>
+							</Col>
+						  </Form.Group>
+						</Form> 					
 						</center>
 					</Modal.Body>
 					<Modal.Footer>
-					  <Button variant="primary" onClick={() => {this.setSCMUsername(); this.setSCMPassword(); this.handleClose()}}>
+					  <Button variant="primary" onClick={() => {this.setSCMUsername(); this.setSCMPassword(); this.setSCMBranch(); this.setSCMCredId(); this.handleClose()}}>
+						Save
+					  </Button>					  
+					</Modal.Footer>
+				  </Modal>
+				  <Modal
+					show={this.state.repoVisible}
+					onHide={this.repoClose}
+					backdrop="static"
+					keyboard={false}
+				  >
+					<Modal.Header closeButton>
+					  <Modal.Title> Repository authentication details</Modal.Title>
+					</Modal.Header>
+					<Modal.Body id="modalBody">
+						<center>
+						<Form style={ form }>
+						  <Form.Group as={Row} controlId="repoUsername">
+							<Form.Label column sm="5">
+							  Repo Username
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" autoComplete="off" placeholder="Enter Repo username" onChange={this.setREPOUsername}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="repoPassword">
+							<Form.Label column sm="5">
+							  Repo Password
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="password" placeholder="Enter Repo Password" onChange={this.setREPOPassword}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="groupId">
+							<Form.Label column sm="5">
+							  Group Id
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter Group Id" onChange={this.setGroupId}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="artifactId">
+							<Form.Label column sm="5">
+							  Artifact Id
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter Artifact Id" onChange={this.setArtifactId}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="fileName">
+							<Form.Label column sm="5">
+							  File Name
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter File Name" onChange={this.setfileName}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="version">
+							<Form.Label column sm="5">
+							  Version
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" placeholder="Enter version" onChange={this.setVersion}/>
+							</Col>
+						  </Form.Group>
+						</Form> 					
+						</center>
+					</Modal.Body>
+					<Modal.Footer>
+					  <Button variant="primary" onClick={() => {this.setREPOUsername(); this.setREPOPassword();  this.setArtifactId(); this.setGroupId(); this.setVersion(); this.repoClose()}}>
 						Save
 					  </Button>					  
 					</Modal.Footer>
@@ -292,8 +467,8 @@ export default class PipelineConfiguration extends Component {
 			<Grid container spacing={3}>
 				<Grid item xs={12}>
 					<Paper style={ header }>
-						<center>
-							<p style={{ padding: "25px 0px" }}>CNAP Pipeline Configuration</p>
+						<center>							
+							<p style={{ padding: "25px 0px" }}><span style={{ fontSize:"25px", fontWeight: "500" }}>CNAP Pipeline Configuration</span></p>
 						</center>
 					</Paper>
 				</Grid>				
@@ -319,6 +494,7 @@ export default class PipelineConfiguration extends Component {
 						</Form.Label>
 						<Col sm="5">
 						      <Form.Control as="select" custom onChange={() => {this.clickEvent(); this.getBuildServer()}} >
+								<option> None </option>
 							  {
 								  this.state.buildServers.map(buildServer => 
 									<option> { buildServer.name } </option>
@@ -328,7 +504,7 @@ export default class PipelineConfiguration extends Component {
 						</Col>
 					  </Form.Group>
 					  <div style={{ display: `${this.state.displayConf}` }}>
-						  <Form.Group as={Row} controlId="scmName">
+						  {/* 						  <Form.Group as={Row} controlId="scmName">
 							<Form.Label column sm="3">
 							  SCM Name
 							</Form.Label>
@@ -341,7 +517,7 @@ export default class PipelineConfiguration extends Component {
 							  }
 							</Form.Control>
 							</Col>
-						  </Form.Group>
+						  </Form.Group> */}
 					  <Form.Group as={Row} controlId="scmURL">
 						<Form.Label column sm="3">
 						  SCM URL Name
@@ -398,7 +574,7 @@ export default class PipelineConfiguration extends Component {
 							  Packaging Format
 							</Form.Label>
 							<Col sm="5">
-							<Form.Control as="select" custom>
+							<Form.Control as="select" custom onChange={this.setPackageFormat}>
 							<option> None </option>
 							  {
 								  this.state.packageList.map(pkg => 
@@ -413,7 +589,7 @@ export default class PipelineConfiguration extends Component {
 							  Repository URL
 							</Form.Label>
 							<Col sm="5">
-							  	<Form.Control type="text" autoComplete="off" placeholder="Enter repository URL" />								
+							  	<Form.Control type="text" autoComplete="off" placeholder="Enter repository URL" onChange={this.setRepositoryURL} onBlur={this.repoShow}/>								
 							</Col>
 						  </Form.Group>
 							  <Button variant="primary" style={{ marginLeft: "-120px" }} onClick={this.submit}>
