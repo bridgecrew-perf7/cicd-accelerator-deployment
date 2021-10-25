@@ -45,6 +45,7 @@ app.delete('/api/deletePipeline/:name', routedata.deletePipeline)
 app.get('/api/triggerPipeline/:name', routedata.triggerPipeline)
 
 app.get('/monument', (req, res) => {
+	console.log('Api monument')
 	res.end(process.env.USERNAME)
 })
 

@@ -40,7 +40,7 @@ export default class Home extends Component {
 				<Grid item xs={12}>
 					<Paper style={header}>
 						<center style={{ padding: "25px 0px" }}>
-							<h3>CNAP sample react CICD dashboard</h3><p style={{ float: "right", margin: "-35px 0px" }}> { this.state.username } <a href="/login"> <span> <ExitToAppIcon style={{ fontSize: "30px", color: "action" }} onClick={() => this.logout}/> </span> </a> </p>
+							<h3 id="homeHeading">CNAP sample react CICD dashboard</h3><p style={{ float: "right", margin: "-35px 0px" }}> { this.state.username } <a href="/login"> <span> <ExitToAppIcon style={{ fontSize: "30px", color: "action" }} onClick={() => this.logout}/> </span> </a> </p>
 						</center>
 					</Paper>
 				</Grid>				
