@@ -95,7 +95,7 @@ export default class BuildServer extends Component {
 				<Grid item xs={12}>
 					<Paper style={ header }>
 						<center>
-							<p style={{ padding: "25px 0px" }}><span style={{ fontSize:"25px", fontWeight: "500" }}>CNAP Build Server</span></p>
+							<p style={{ padding: "25px 0px" }}><span id="buildServerHeading" style={{ fontSize:"25px", fontWeight: "500" }}>CNAP Build Server</span></p>
 						</center>
 					</Paper>
 				</Grid>				

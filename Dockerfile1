@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:latest 
 
 ADD supervisor.conf /root/supervisor.conf
 
@@ -18,13 +18,13 @@ WORKDIR cicd-accelerator-frontend
 
 RUN npm install
 
-RUN npm run build
+#RUN npm run build
 
-RUN npm install -g serve
+#RUN npm install -g serve
 
 WORKDIR /
 
-EXPOSE 3001 5000
+EXPOSE 3001 3000
 
 RUN mkdir -p /var/log/supervisor
 

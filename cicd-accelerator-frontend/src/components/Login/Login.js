@@ -91,7 +91,7 @@ export default class Login extends Component {
 					</Form>
 					<center>
 					<ButtonGroup size="lg" className="mb-3">
-						<Button onClick={this.submit}>Submit</Button>
+						<Button onClick={this.submit} id="submitBtn">Submit</Button>
 					</ButtonGroup>
 					</center>
 					</div>				

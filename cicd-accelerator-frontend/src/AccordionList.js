@@ -185,7 +185,7 @@ export default class AccordionList extends Component {
 					<Card.Header>
 					  <Accordion.Toggle as={Button} variant="link" eventKey="1">
 						<center>
-							Build Server <span><a href="/buildServer"><AddCircleIcon /></a></span>
+							Build Server <span><a href="/buildServer"><AddCircleIcon id="buildServerIcon"/></a></span>
 						</center>
 					  </Accordion.Toggle>
 					</Card.Header>
@@ -197,7 +197,7 @@ export default class AccordionList extends Component {
 					<Card.Header>
 					  <Accordion.Toggle as={Button} variant="link" eventKey="2">
 					  <center>
-						Pipeline Configuration <span><a href="/pipelineConfiguration"><AddCircleIcon /></a></span>
+						Pipeline Configuration <span><a href="/pipelineConfiguration"><AddCircleIcon id="pipelineConfIcon"/></a></span>
 					  </center>
 					  </Accordion.Toggle>
 					</Card.Header>

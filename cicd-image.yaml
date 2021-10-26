@@ -1,4 +1,13 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: cicd-accelerator
+  labels:
+    name: cicd-image
+    
+---
+
+apiVersion: v1
 data:
   name: surendhardevops
   url: localhost
@@ -41,7 +50,7 @@ spec:
         app: cicd-image
     spec: 
       containers: 
-        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.8"
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.3"
           imagePullPolicy: Always
           name: cicd-image
           ports: 
@@ -86,10 +95,10 @@ spec:
   ports:
   - port: 3003 #port accessing in the server
     protocol: TCP
-    targetPort: 5000 #port exposed in docker container
+    targetPort: 3000 #port exposed in docker container
   selector:
     app: cicd-image
-  type: ClusterIP #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
+  type: LoadBalancer #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
 
     
 ---
@@ -109,49 +118,52 @@ spec:
     targetPort: 3001 #port exposed in docker container
   selector:
     app: cicd-image
-  type: ClusterIP  #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
+  type: LoadBalancer  #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
 
     
 ---
 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: minimal-ingress-backend
-  namespace: cicd-accelerator
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-  - host: surendharapp-backend.com 
-    http:
-      paths:
-      - pathType: Prefix
-        path: /
-        backend:
-          service:
-            name: cicd-backend-service
-            port:
-              number: 3001
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+  # name: minimal-ingress-backend
+  # namespace: cicd-accelerator
+  # annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+  # rules:
+  # - host: surendharapp-backend.com 
+    # http:
+      # paths:
+      # - pathType: Prefix
+        # path: /
+        # backend:
+          # service:
+            # name: cicd-backend-service
+            # port:
+              # number: 3001
               
----
+# ---
 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: minimal-ingress-frontend
-  namespace: cicd-accelerator
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-  - host: surendharapp-frontend.com 
-    http:
-      paths:
-      - pathType: Prefix
-        path: /
-        backend:
-          service:
-            name: cicd-frontend-service
-            port:
-              number: 3003
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+  # name: minimal-ingress-frontend
+  # namespace: cicd-accelerator
+  # annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+  # rules:
+  # - host: surendharapp-frontend.com 
+    # http:
+      # paths:
+      # - pathType: Prefix
+        # path: /
+        # backend:
+          # service:
+            # name: cicd-frontend-service
+            # port:
+              # number: 3003
+
+
+##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              

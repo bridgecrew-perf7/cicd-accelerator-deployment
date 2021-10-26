@@ -5,7 +5,7 @@ module.exports = {
 
 	checkUser: function(req, res) {		
 		var username = (req.query.username)
-		var password = (req.query.username)
+		var password = (req.query.password)
 		db.checkUser(username, password, function(pass, fail) {
 			if(pass) {
 				console.log(pass)
