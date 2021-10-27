@@ -1,13 +1,31 @@
-FROM ubuntu:latest
+FROM alpine:latest 
 
-ADD supervisord.conf /etc/supervisord.conf
+ADD supervisord.conf /root/supervisord.conf
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install nodejs npm curl supervisor -y
+RUN apk add nodejs npm curl supervisor
 
 ADD cicd-accelerator-frontend cicd-accelerator-frontend
 
 ADD cicd-accelerator-backend cicd-accelerator-backend
 
+WORKDIR cicd-accelerator-backend
+
+RUN npm install
+
+WORKDIR /
+
+WORKDIR cicd-accelerator-frontend
+
+RUN npm install
+
+#RUN npm run build
+
+RUN npm install -g serve
+
+WORKDIR /
+
 EXPOSE 3001 3000
 
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+RUN mkdir -p /var/log/supervisor
+
+CMD ["supervisord", "-c", "/root/supervisord.conf"]
