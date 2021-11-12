@@ -3,7 +3,7 @@ var core = require('../core/core.js')
 
 module.exports = {
 
-	checkUser: function(req, res) {		
+	checkUser: function(req, res) {
 		var username = (req.query.username)
 		var password = (req.query.password)
 		db.checkUser(username, password, function(pass, fail) {
@@ -100,6 +100,7 @@ module.exports = {
 	
 
 	deleteBuildServer: function(req, res) {
+		console.log(req.params)
 		var buildServerName = req.params.name
 		db.deleteBuildServer(buildServerName, function(pass, fail) {
 			if(pass) {
@@ -113,6 +114,7 @@ module.exports = {
 		})
 	},
 	deletePipeline: function(req, res) {
+		console.log(req.params)
 		var pipelineName = req.params.name
 		console.log('In deletePipeline method')
 		db.getPipelineInfo(pipelineName, function(info_pass, info_fail) {
@@ -188,5 +190,6 @@ module.exports = {
 	
 	getHotels: function(req, res) {
 		console.log('get hotels')
+		res.end('NodeJS works')
 	}
 }

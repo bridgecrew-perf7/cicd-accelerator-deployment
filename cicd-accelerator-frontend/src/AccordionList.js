@@ -74,8 +74,8 @@ export default class AccordionList extends Component {
 	}
 	
 	deletePipeline(item) {
-		//axios.delete('http://localhost:3001/api/deletePipeline/'+item.name).then(res => {console.log(res)})		
-		console.log(item)
+		axios.delete('http://localhost:3001/api/deletePipeline/'+item).then(res => {console.log(res)})
+		//alert(item)
 	}
 	
 	triggerConfirmation(item, e) {
