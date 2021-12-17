@@ -26,7 +26,10 @@ module.exports = {
 		console.log(command);
 		congfigjson.json.scm.userRemoteConfigs["hudson.plugins.git.UserRemoteConfig"].url = values.data.pipelineInputs.scm.scmURL
 		congfigjson.json.scm.userRemoteConfigs["hudson.plugins.git.UserRemoteConfig"].credentialsId = 'git_creds'  		
-		congfigjson.json.builders["hudson.tasks.Shell"].command = command				
+		congfigjson.json.builders["hudson.tasks.Shell"].command = command	
+		//"sonar:sonar -Dsonar.projectKey=tomcat-application -Dsonar.host.url=http://172.18.0.3:9000 -Dsonar.login=2f8c3f01cbd92f74632c06a83308ce83221ade75"
+		var sonarcmd = "sonar:sonar -Dsonar.projectKey="+values.data.pipelineInputs.sonarqube.sonarKey+" -Dsonar.host.url="+values.data.pipelineInputs.sonarqube.sonarURL+" -Dsonar.login="+values.data.pipelineInputs.sonarqube.sonarLogin+""
+		congfigjson.json.builders["hudson.tasks.Maven"][1].targets = sonarcmd
 		var xml = js2xmlparser.parse("project", congfigjson.json)
 		var pipelineName = values.data.pipelineName	
         	jenkins.job.create(pipelineName, xml, function(err) {

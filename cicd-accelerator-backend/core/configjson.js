@@ -42,7 +42,7 @@ module.exports = {
             "injectBuildVariables": "false"
          },         
 		 {
-            "targets": "sonar:sonar -Dsonar.projectKey=tomcat-application -Dsonar.host.url=http://172.18.0.3:9000 -Dsonar.login=2f8c3f01cbd92f74632c06a83308ce83221ade75",
+            "targets": "sonarCmd",
             "usePrivateRepository": "false",
             "settings": [],
             "globalSettings": [],

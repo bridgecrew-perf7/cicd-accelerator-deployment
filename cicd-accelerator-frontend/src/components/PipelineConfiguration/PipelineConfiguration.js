@@ -29,6 +29,7 @@ export default class PipelineConfiguration extends Component {
 		this.state = {
 			isVisible: false,
 			repoVisible: false,
+			sonarVisible: false,
 			displayConf: "none",
 			technology: "null",
 			pipelineName: "",
@@ -49,6 +50,9 @@ export default class PipelineConfiguration extends Component {
 			artifactId: "",
 			version: "",
 			fileName: "",
+			sonarURL: "",
+			sonarKey: "",
+			sonarLogin: "",
 			technologyList: [
 				{
 					"name": "None"
@@ -184,6 +188,12 @@ export default class PipelineConfiguration extends Component {
 		})
 	}
 	
+	sonarModalShow = () => {
+		this.setState({
+			sonarVisible: true
+		})
+	}
+	
 	setTechnology = (event) => {
 		this.setState({
 			technology: event.target.value
@@ -198,6 +208,12 @@ export default class PipelineConfiguration extends Component {
 	repoClose = () => {
 		this.setState({
 			repoVisible: false
+		})
+	}
+
+	sonarClose = () => {
+		this.setState({
+			sonarVisible: false
 		})
 	}
 	
@@ -289,6 +305,24 @@ export default class PipelineConfiguration extends Component {
 		})
 	}
 	
+	getSonarURL = (e) => {
+		this.setState({
+			sonarURL: e.target.value
+		})
+	}
+	
+	setSonarKey = (e) => {
+		this.setState({
+			sonarKey: document.getElementById('sonarProjectKey').value
+		})
+	}
+	
+	setSonarLogin = (e) => {
+		this.setState({
+			sonarLogin: document.getElementById('sonarLoginAuth').value
+		})
+	}
+	
 	componentDidMount() {
 		axios.get('http://localhost:3001/api/getPipelines')
 		.then(res => {
@@ -316,6 +350,11 @@ export default class PipelineConfiguration extends Component {
 					"scmPassword": this.state.scmPassword,
 					"scmCredId": this.state.scmCredId
 				},
+				"sonarqube": {
+					"sonarURL": this.state.sonarURL,
+					"sonarKey": this.state.sonarKey,
+					"sonarLogin": this.state.sonarLogin
+				},
 				"technology": this.state.technology,
 				"buildToolName": this.state.buildToolName,				
 				"repoInputs": {
@@ -331,9 +370,9 @@ export default class PipelineConfiguration extends Component {
 			}
 		}
 		console.log(this.pipelineConf)
-		axios.post('http://localhost:3001/api/addPipelineDetails', {
+ 		axios.post('http://localhost:3001/api/addPipelineDetails', {
 			data: this.pipelineConf
-		})
+	})
 	}	
 	
 	render() {
@@ -341,6 +380,44 @@ export default class PipelineConfiguration extends Component {
 		return (
 			<div>
 			<div style={{ backgroundColor: "white" }}>
+				<Modal
+					show={this.state.sonarVisible}
+					onHide={this.sonarClose}
+					backdrop="static"
+					keyboard={true}
+				  >
+					<Modal.Header closeButton>
+					  <Modal.Title> Sonar authentication details</Modal.Title>
+					</Modal.Header>
+					<Modal.Body id="modalBody">
+						<center>
+						<Form style={ form }>
+						  <Form.Group as={Row} controlId="sonarProjectKey">
+							<Form.Label column sm="5">
+							  Sonar Project
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="text" autoComplete="off" placeholder="Enter Sonar Project Key" onChange={this.setSonarKey}/>
+							</Col>
+						  </Form.Group>
+						  <Form.Group as={Row} controlId="sonarLoginAuth">
+							<Form.Label column sm="5">
+							  Sonar Login Auth
+							</Form.Label>
+							<Col sm="7">
+							  <Form.Control type="password" placeholder="Enter Sonar Login Auth" onChange={this.setSonarLogin}/>
+							</Col>
+						  </Form.Group>
+						</Form> 					
+						</center>
+					</Modal.Body>
+					<Modal.Footer>
+					  <Button variant="primary" onClick={() => {this.setSonarKey(); this.setSonarLogin(); this.sonarClose()}}>
+						Save
+					  </Button>					  
+					</Modal.Footer>
+				  </Modal>			
+			
 				<Modal
 					show={this.state.isVisible}
 					onHide={this.handleClose}
@@ -524,6 +601,14 @@ export default class PipelineConfiguration extends Component {
 						</Form.Label>
 						<Col sm="5">
 						  <Form.Control type="text" autoComplete="off" placeholder="Enter SCM url" onChange={this.getSCMURL} onBlur={this.modalShow}/>
+						</Col>
+					  </Form.Group>
+					  <Form.Group as={Row} controlId="sonarURL">
+						<Form.Label column sm="3">
+						  SonarQube URL
+						</Form.Label>
+						<Col sm="5">
+						  <Form.Control type="text" autoComplete="off" placeholder="Enter Sonar url" onChange={this.getSonarURL} onBlur={this.sonarModalShow}/>
 						</Col>
 					  </Form.Group>	
 						  <Form.Group as={Row} controlId="technologyName">

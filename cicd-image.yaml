@@ -10,7 +10,7 @@ metadata:
 apiVersion: v1
 data:
   name: surendhardevops
-  url: localhost
+  url: 192.168.1.4
 kind: ConfigMap
 metadata:
   name: cicd-config
@@ -22,8 +22,8 @@ metadata:
 
 apiVersion: v1
 data:
-  PASSWORD: YWRtaW5AMTIz
-  USERNAME: cm9vdA==
+  PASSWORD: Y2ljZF9kYl91c2Vy #YWRtaW5AMTIz
+  USERNAME: Y2ljZF9kYl91c2Vy #cm9vdA==
 kind: Secret
 metadata:
   name: sqldb-secret
@@ -50,11 +50,11 @@ spec:
         app: cicd-image
     spec: 
       containers: 
-        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.18"
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.21"
           imagePullPolicy: Always
           name: cicd-image
           ports: 
-            - containerPort: 5000
+            - containerPort: 3000
               protocol: TCP
             - containerPort: 3001
               protocol: TCP            
@@ -95,11 +95,14 @@ spec:
   ports:
   - port: 3003 #port accessing in the server
     protocol: TCP
-    targetPort: 5000 #port exposed in docker container
+    targetPort: 3000 #port exposed in docker container
   selector:
     app: cicd-image
   type: LoadBalancer #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
-
+# status:
+  # loadBalancer:
+    # ingress:
+    # - hostname: localhost
     
 ---
 
@@ -119,7 +122,10 @@ spec:
   selector:
     app: cicd-image
   type: LoadBalancer  #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
-
+# status:
+  # loadBalancer:
+    # ingress:
+    # - hostname: localhost
     
 ---
 

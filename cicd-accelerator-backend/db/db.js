@@ -1,8 +1,11 @@
 var mysql      = require('mysql');
 
 var connection = mysql.createConnection({
-  host     : '192.168.1.2',
+  //host     : process.env.myurl,
+  host     : '192.168.1.4',
+  //user     : process.env.USERNAME,//'cicd_db_user',
   user     : 'cicd_db_user',
+  //password : process.env.PASSWORD,//'cicd_db_user',
   password : 'cicd_db_user',
   database : 'cicd_accelerator'
 });
@@ -85,7 +88,7 @@ module.exports = {
 	},
 	addPipelineDetails: function(pipelineName, buildServerName, pipelineInputs, callback) {
 		//console.log((pipelineInputs.data.pipelineInputs))
- 		connection.query("insert into pipelineDetails (buildServer, pipelineName, pipelineInputs, isSuccess) values ('"+buildServerName+"', '"+pipelineName+"', '"+JSON.stringify(pipelineInputs.data.pipelineInputs)+"', inprogress)", function(err, stdout) {
+ 		connection.query("insert into pipelineDetails (buildServer, pipelineName, pipelineInputs, isSuccess) values ('"+buildServerName+"', '"+pipelineName+"', '"+JSON.stringify(pipelineInputs.data.pipelineInputs)+"', 'inprogress')", function(err, stdout) {
 			if(err) {
 				console.log(err)
 				callback(null, err)

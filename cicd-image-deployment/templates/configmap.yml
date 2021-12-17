@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  name: {{ .Values.config.name }}
+  url: {{ .Values.config.url }}
+kind: ConfigMap
+metadata:
+  name: cicd-config
+  labels:
+    {{- include "cicd-image-deployment.labels" . | nindent 4 }}

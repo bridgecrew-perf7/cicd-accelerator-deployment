@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cicd-image-deployment.fullname" . }}
+  labels:
+    {{- include "cicd-image-deployment.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "cicd-image-deployment.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "cicd-image-deployment.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cicd-image-deployment.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "docker.io/surendharselvakumar/alpine-cicd-image:{{ .Values.image.tag }}"
+          imagePullPolicy: "Always"
+          env:
+          - name: myname
+            valueFrom: 
+              configMapKeyRef:
+                name: cicd-config
+                key: name
+          - name: myurl
+            valueFrom:
+              configMapKeyRef:
+                name: cicd-config
+                key: url
+          - name: USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: sqldb-secret
+                key: USERNAME
+          - name: PASSWORD
+            valueFrom: 
+              secretKeyRef:
+                name: sqldb-secret
+                key: PASSWORD          
+          ports:
+            #- name: http
+            - containerPort: 3001
+              protocol: TCP
+            - containerPort: 3000
+              protocol: TCP              
+
