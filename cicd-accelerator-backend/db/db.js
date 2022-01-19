@@ -2,7 +2,7 @@ var mysql      = require('mysql');
 
 var connection = mysql.createConnection({
   //host     : process.env.myurl,
-  host     : '192.168.1.4',
+  host     : '192.168.1.2',
   //user     : process.env.USERNAME,//'cicd_db_user',
   user     : 'cicd_db_user',
   //password : process.env.PASSWORD,//'cicd_db_user',
@@ -31,6 +31,29 @@ module.exports = {
 		})
 		
 	},
+	
+	getPipelineDetails: function(pipelineName, callback) {
+		console.log('select buildserver, pipelineName, isSuccess from pipelineDetails where pipelineName = "'+pipelineName+'"')
+		connection.query('select buildserver, pipelineName, isSuccess from pipelineDetails where pipelineName = "'+pipelineName+'"', function(err, stdout) {
+			if(err) {
+				console.log(err)
+			}
+			else {
+				if(stdout.length === 1) {
+					var op = [{
+						'BuildServer': stdout[0].buildserver,
+						'PipelineName': stdout[0].pipelineName,
+						'isSuccess': stdout[0].isSuccess
+					}]
+					callback(op, null);
+				}
+				else {
+					callback(null, op);
+				}
+			}
+		})
+	},
+	
 	addBuildServer:  function(username, password, serverName, serverURL, callback) {
 		connection.query('insert into buildServer(username, password, serverName, serverURL) values ("'+username+'", "'+password+'", "'+serverName+'", "'+serverURL+'")', function(err, stdout) {
 			if(err) {

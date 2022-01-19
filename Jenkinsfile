@@ -26,7 +26,7 @@ pipeline {
         }
         stage ('Docker Login') {
             when {
-                expression { params.deploymentType == 'kubernetes' }
+                expression { params.deploymentType == 'kubernetes' } 
             }
             steps {
                 sh '''

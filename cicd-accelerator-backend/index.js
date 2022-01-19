@@ -34,6 +34,8 @@ app.get('/api/getPipelines', routedata.getPipelines);
 
 app.get('/api/getPipelineLogs/:pipelineName', routedata.getPipelineLogs);
 
+app.get('/api/getPipelineDetails', routedata.getPipelineDetails);
+
 app.post('/api/addPipelineDetails', routedata.addPipelineDetails);
 
 app.get('/hotels', routedata.getHotels);
