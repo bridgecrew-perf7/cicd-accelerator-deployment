@@ -25,9 +25,6 @@ pipeline {
             }
         }
         stage ('Docker Login') {
-            when {
-                expression { params.deploymentType == 'kubernetes' } 
-            }
             steps {
                 sh '''
 					cd $WORKSPACE/					
@@ -66,7 +63,6 @@ pipeline {
 	  steps {
 	  	sh 'cd $WORKSPACE'
 		sh 'cat cicd-image.yml'
-		sh 'kubectl apply -f cicd-image.yml'
 	  }
 	 }
     }
