@@ -1,5 +1,6 @@
 var db = require('../db/db.js')
 var core = require('../core/core.js')
+const log = require('log-to-file');
 
 module.exports = {
 
@@ -8,13 +9,15 @@ module.exports = {
 		var password = (req.query.password)
 		db.checkUser(username, password, function(pass, fail) {
 			if(pass) {
-				console.log(pass)
+				console.log(pass)				
 				res.end(pass)
+				log(pass, "./logs/cicd-logs.log","\r\n")
 				
 			}
 			else {				
 				console.log((fail))
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}
 		})
 	},
@@ -24,12 +27,14 @@ module.exports = {
 		console.log(pipelineName)
 		db.getPipelineDetails(pipelineName, function(pass, fail) {
 			if(pass) {
-				console.log(JSON.stringify(pass))
+				console.log(JSON.stringify(pass))				
 				res.end(JSON.stringify(pass))
+				log(JSON.stringify(pass), "./logs/cicd-logs.log","\r\n")
 			}
 			else {
-				console.log(fail)
+				console.log(fail)				
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}
 		})
 	},
@@ -38,12 +43,14 @@ module.exports = {
 		var checkDuplicateServerName = (req.query.serverName)
 		db.checkServerName(checkDuplicateServerName, function(pass, fail) {
 			if(pass) {				
-				console.log(typeof(pass))
+				console.log(typeof(pass))				
 				res.end(pass)
+				log(pass, "./logs/cicd-logs.log","\r\n")
 			}
 			else {
-				console.log(fail)
+				console.log(fail)				
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}
 		})
 	},
@@ -55,12 +62,14 @@ module.exports = {
 		var serverURL = JSON.parse(req.query.data).buildServerURL
   		db.addBuildServer(username, password, serverName, serverURL, function(pass, fail) {
 			if(pass) {
-				console.log(pass)
+				console.log(pass)				
 				res.end(pass)
+				log(pass, "./logs/cicd-logs.log","\r\n")
 			}
 			else {
-				console.log(fail)
+				console.log(fail)			
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}
 		})
 	},
@@ -70,10 +79,12 @@ module.exports = {
 			if(pass) {
 				//console.log(JSON.stringify(pass))
 				res.end(JSON.stringify(pass))
+				log(JSON.stringify(pass), "./logs/cicd-logs.log","\r\n")
 			}
 			else {
-				console.log(fail)
+				console.log(fail)				
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}			
 		})
 	},
@@ -83,10 +94,12 @@ module.exports = {
 			if(pass) {
 				//console.log(JSON.stringify(pass))
 				res.end(JSON.stringify(pass))
+				log(JSON.stringify(pass), "./logs/cicd-logs.log","\r\n")
 			}
 			else {
 				console.log(fail)
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}			
 		})
 	},
@@ -100,15 +113,18 @@ module.exports = {
 						console.log('In route.js')
 						console.log(log_pass)
 						res.end(JSON.stringify(log_pass))
+						log(JSON.stringify(log_pass), "./logs/cicd-logs.log","\r\n")
 					}
 					else {
 						console.log(log_fail)
+						log(log_fail, "./logs/cicd-logs.log","\r\n")
 					}
 				})
 			}
 			else {
 				console.log(fail)
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}
 		})
 	},
@@ -121,10 +137,12 @@ module.exports = {
 			if(pass) {
 				//console.log(JSON.stringify(pass))
 				res.end((pass))
+				log(pass, "./logs/cicd-logs.log","\r\n")
 			}
 			else {
 				console.log(fail)
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}			
 		})
 	},
@@ -139,21 +157,25 @@ module.exports = {
 						db.deletePipeline(pipelineName, function(pass, fail) {
 							if(pass) {				
 								res.end((pass))
+								log(pass, "./logs/cicd-logs.log","\r\n")
 							}
 							else {
 								console.log(fail)
 								res.end(fail)
+								log(fail, "./logs/cicd-logs.log","\r\n")
 							}			
 						})				
 					}
 					else {
 						console.log(del_fail)
 						res.end(del_fail)
+						log(del_fail, "./logs/cicd-logs.log","\r\n")
 					}
 				})				
 			}
 			else {
 				console.log(info_fail)
+				log(del_fail, "./logs/cicd-logs.log","\r\n")
 			}
 		})
 	},
@@ -168,16 +190,19 @@ module.exports = {
 					if(trigger_pass) {
 						console.log(trigger_pass)
 						res.end(trigger_pass)
+						log(trigger_pass, "./logs/cicd-logs.log","\r\n")
 					}
 					else {
 						console.log(trigger_fail)
 						res.end(trigger_fail)
+						log(trigger_fail, "./logs/cicd-logs.log","\r\n")
 					}
 				})
 			}
 			else {
 				console.log(fail) 
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}
 		})
 	},
@@ -190,15 +215,18 @@ module.exports = {
 					if(trigger_pass) {
 						console.log('In route.js')
 						console.log(trigger_pass)
+						log(trigger_pass, "./logs/cicd-logs.log","\r\n")
 					}
 					else {
 						console.log(trigger_fail)
+						log(trigger_fail, "./logs/cicd-logs.log","\r\n")
 					}
 				})
 			}
 			else {
 				console.log(fail)
 				res.end(fail)
+				log(fail, "./logs/cicd-logs.log","\r\n")
 			}
 		})
 	},
@@ -206,5 +234,6 @@ module.exports = {
 	getHotels: function(req, res) {
 		console.log('get hotels')
 		res.end('NodeJS works')
+		log('NodeJS works', "./logs/cicd-logs.log","\r\n")
 	}
 }

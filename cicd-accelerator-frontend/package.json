@@ -1,7 +1,7 @@
 {
-  "name": "personal-site",
-  "version": "0.1.0",
-  "private": true,
+  "name": "cicd-accelerator-frontend",
+  "version": "1.0.0",
+  "private": false,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
     "@fortawesome/free-brands-svg-icons": "^5.15.2",
@@ -26,11 +26,10 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "set PORT=81 && react-scripts start",
+    "start": "set PORT=81 && react-scripts start ",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "start-frontend-backend": "(npm start) & (cd ..\\..\\NodeAPP\\NodeJS_App\\npm start)"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

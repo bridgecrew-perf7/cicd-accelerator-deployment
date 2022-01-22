@@ -1,0 +1,9 @@
+2022.01.22, 18:23:24.0400 UTC -> NodeJS works
+2022.01.22, 18:28:26.0320 UTC -> [{"name":"surendhar_server"}]
+2022.01.22, 18:30:02.0576 UTC -> [{"buildServer":"surendhar_server","name":"surendhar_pipeline","isSuccess":"inprogress","id":7}]
+2022.01.22, 18:31:49.0205 UTC -> [{"buildServer":"surendhar_server","name":"surendhar_pipeline","isSuccess":"inprogress","id":7}]
+2022.01.22, 18:34:40.0168 UTC -> NodeJS works
+2022.01.22, 18:34:56.0735 UTC -> [{"buildServer":"surendhar_server","name":"surendhar_pipeline","isSuccess":"inprogress","id":7}]
+2022.01.22, 18:36:32.0113 UTC -> NodeJS works
+2022.01.22, 18:36:38.0228 UTC -> Error: jenkins: job.get: connect ECONNREFUSED 192.168.1.2:8080
+2022.01.22, 18:36:57.0093 UTC -> [{"buildServer":"surendhar_server","name":"surendhar_pipeline","isSuccess":"inprogress","id":7}]
