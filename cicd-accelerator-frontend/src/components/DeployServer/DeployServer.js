@@ -126,7 +126,7 @@ export default class DeployServer extends Component {
 								<option> None </option>
 							  {
 								  this.state.pipelines.map(pipeline => 
-									<option> { pipeline.pipelineName } </option>
+									<option> { pipeline.name } </option>
 								  )
 							  }
 							</Form.Control>

@@ -10,7 +10,7 @@ metadata:
 apiVersion: v1
 data:
   name: surendhardevops
-  url: 192.168.1.4
+  url: 192.168.1.2
 kind: ConfigMap
 metadata:
   name: cicd-config

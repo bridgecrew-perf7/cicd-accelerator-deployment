@@ -19,6 +19,21 @@ module.exports = {
 		})
 	},
 	
+	getPipelineDetails: function(req, res) {
+		var pipelineName = req.query.pipelineName
+		console.log(pipelineName)
+		db.getPipelineDetails(pipelineName, function(pass, fail) {
+			if(pass) {
+				console.log(JSON.stringify(pass))
+				res.end(JSON.stringify(pass))
+			}
+			else {
+				console.log(fail)
+				res.end(fail)
+			}
+		})
+	},
+	
 	checkServerName: function(req, res) {
 		var checkDuplicateServerName = (req.query.serverName)
 		db.checkServerName(checkDuplicateServerName, function(pass, fail) {
