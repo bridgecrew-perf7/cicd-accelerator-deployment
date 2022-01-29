@@ -28,4 +28,8 @@ EXPOSE 3001 3000
 
 RUN mkdir -p /var/log/supervisor
 
+WORKDIR /
+
+VOLUME cicd-accelerator-backend/logs
+
 CMD ["supervisord", "-c", "/root/supervisord.conf"]

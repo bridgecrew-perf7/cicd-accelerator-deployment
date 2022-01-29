@@ -2,3 +2,5 @@ cicd-accelerator-frontend/node_modules/*
 cicd-accelerator-backend/node_modules/*
 dist/
 npm-debug.*
+*.xml
+*.txt
