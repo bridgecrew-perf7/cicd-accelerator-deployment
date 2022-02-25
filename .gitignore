@@ -4,4 +4,4 @@ dist/
 npm-debug.*
 *.xml
 *.txt
-*.log
+cicd-accelerator-backend/*/*.log
