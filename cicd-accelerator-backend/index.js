@@ -1,4 +1,5 @@
 var express = require('express');
+var CONSTANTS = require('./constants/serviceconstants.js')
 
 const app = express()
 
@@ -46,8 +47,11 @@ app.delete('/api/deletePipeline/:name', routedata.deletePipeline)
 
 app.get('/api/triggerPipeline/:name', routedata.triggerPipeline)
 
+app.get('/api/readLogs', routedata.readLogs)
+
 app.get('/monument', (req, res) => {
 	console.log('Api monument')
+	console.log(CONSTANTS.logPath)
 	res.end(process.env.USERNAME)
 })
 

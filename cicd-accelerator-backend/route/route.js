@@ -1,6 +1,8 @@
 var db = require('../db/db.js')
 var core = require('../core/core.js')
 const log = require('log-to-file');
+var CONSTANTS = require('../constants/serviceconstants.js')
+var fs = require('fs')
 
 module.exports = {
 
@@ -11,13 +13,13 @@ module.exports = {
 			if(pass) {
 				console.log(pass)				
 				res.end(pass)
-				log(pass, "./logs/cicd-logs.log","\r\n")
+				log(pass, CONSTANTS.logPath,"\r\n")
 				
 			}
 			else {				
 				console.log((fail))
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}
 		})
 	},
@@ -29,12 +31,33 @@ module.exports = {
 			if(pass) {
 				console.log(JSON.stringify(pass))				
 				res.end(JSON.stringify(pass))
-				log(JSON.stringify(pass), "./logs/cicd-logs.log","\r\n")
+				log(JSON.stringify(pass), CONSTANTS.logPath,"\r\n")
 			}
 			else {
 				console.log(fail)				
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
+			}
+		})
+	},
+	
+	readLogs: function(req, res) {
+		fs.exists(CONSTANTS.logPath, function(yes, no) {
+			if(yes) {
+				console.log('The file exists')
+				fs.readFile(CONSTANTS.logPath, 'UTF-8', function(err, data) {
+					if(err) {						
+						console.log("Logs", err)						
+					}
+					else {						
+						console.log(JSON.stringify(CONSTANTS.logPath))
+						console.log("Logs", data)
+						res.end(data)
+					}
+				})
+			}
+			else {
+				console.log('The damn file does not exist')
 			}
 		})
 	},
@@ -45,12 +68,12 @@ module.exports = {
 			if(pass) {				
 				console.log(typeof(pass))				
 				res.end(pass)
-				log(pass, "./logs/cicd-logs.log","\r\n")
+				log(pass, CONSTANTS.logPath,"\r\n")
 			}
 			else {
 				console.log(fail)				
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}
 		})
 	},
@@ -64,12 +87,12 @@ module.exports = {
 			if(pass) {
 				console.log(pass)				
 				res.end(pass)
-				log(pass, "./logs/cicd-logs.log","\r\n")
+				log(pass, CONSTANTS.logPath,"\r\n")
 			}
 			else {
 				console.log(fail)			
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}
 		})
 	},
@@ -79,12 +102,12 @@ module.exports = {
 			if(pass) {
 				//console.log(JSON.stringify(pass))
 				res.end(JSON.stringify(pass))
-				log(JSON.stringify(pass), "./logs/cicd-logs.log","\r\n")
+				log(JSON.stringify(pass), CONSTANTS.logPath,"\r\n")
 			}
 			else {
 				console.log(fail)				
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}			
 		})
 	},
@@ -94,12 +117,12 @@ module.exports = {
 			if(pass) {
 				//console.log(JSON.stringify(pass))
 				res.end(JSON.stringify(pass))
-				log(JSON.stringify(pass), "./logs/cicd-logs.log","\r\n")
+				log(JSON.stringify(pass), CONSTANTS.logPath,"\r\n")
 			}
 			else {
 				console.log(fail)
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}			
 		})
 	},
@@ -113,18 +136,18 @@ module.exports = {
 						console.log('In route.js')
 						console.log(log_pass)
 						res.end(JSON.stringify(log_pass))
-						log(JSON.stringify(log_pass), "./logs/cicd-logs.log","\r\n")
+						log(JSON.stringify(log_pass), CONSTANTS.logPath,"\r\n")
 					}
 					else {
 						console.log(log_fail)
-						log(log_fail, "./logs/cicd-logs.log","\r\n")
+						log(log_fail, CONSTANTS.logPath,"\r\n")
 					}
 				})
 			}
 			else {
 				console.log(fail)
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}
 		})
 	},
@@ -137,12 +160,12 @@ module.exports = {
 			if(pass) {
 				//console.log(JSON.stringify(pass))
 				res.end((pass))
-				log(pass, "./logs/cicd-logs.log","\r\n")
+				log(pass, CONSTANTS.logPath,"\r\n")
 			}
 			else {
 				console.log(fail)
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}			
 		})
 	},
@@ -157,25 +180,25 @@ module.exports = {
 						db.deletePipeline(pipelineName, function(pass, fail) {
 							if(pass) {				
 								res.end((pass))
-								log(pass, "./logs/cicd-logs.log","\r\n")
+								log(pass, CONSTANTS.logPath,"\r\n")
 							}
 							else {
 								console.log(fail)
 								res.end(fail)
-								log(fail, "./logs/cicd-logs.log","\r\n")
+								log(fail, CONSTANTS.logPath,"\r\n")
 							}			
 						})				
 					}
 					else {
 						console.log(del_fail)
 						res.end(del_fail)
-						log(del_fail, "./logs/cicd-logs.log","\r\n")
+						log(del_fail, CONSTANTS.logPath,"\r\n")
 					}
 				})				
 			}
 			else {
 				console.log(info_fail)
-				log(del_fail, "./logs/cicd-logs.log","\r\n")
+				log(del_fail, CONSTANTS.logPath,"\r\n")
 			}
 		})
 	},
@@ -190,19 +213,19 @@ module.exports = {
 					if(trigger_pass) {
 						console.log(trigger_pass)
 						res.end(trigger_pass)
-						log(trigger_pass, "./logs/cicd-logs.log","\r\n")
+						log(trigger_pass, CONSTANTS.logPath,"\r\n")
 					}
 					else {
 						console.log(trigger_fail)
 						res.end(trigger_fail)
-						log(trigger_fail, "./logs/cicd-logs.log","\r\n")
+						log(trigger_fail, CONSTANTS.logPath,"\r\n")
 					}
 				})
 			}
 			else {
 				console.log(fail) 
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}
 		})
 	},
@@ -215,18 +238,18 @@ module.exports = {
 					if(trigger_pass) {
 						console.log('In route.js')
 						console.log(trigger_pass)
-						log(trigger_pass, "./logs/cicd-logs.log","\r\n")
+						log(trigger_pass, CONSTANTS.logPath,"\r\n")
 					}
 					else {
 						console.log(trigger_fail)
-						log(trigger_fail, "./logs/cicd-logs.log","\r\n")
+						log(trigger_fail, CONSTANTS.logPath,"\r\n")
 					}
 				})
 			}
 			else {
 				console.log(fail)
 				res.end(fail)
-				log(fail, "./logs/cicd-logs.log","\r\n")
+				log(fail, CONSTANTS.logPath,"\r\n")
 			}
 		})
 	},
@@ -234,6 +257,6 @@ module.exports = {
 	getHotels: function(req, res) {
 		console.log('get hotels')
 		res.end('NodeJS works')
-		log('NodeJS works', "./logs/cicd-logs.log","\r\n")
+		log('NodeJS works', CONSTANTS.logPath,"\r\n")
 	}
 }

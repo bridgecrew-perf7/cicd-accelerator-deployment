@@ -11,6 +11,7 @@ spec:
   selector:
     matchLabels:
       {{- include "cicd-image-deployment.selectorLabels" . | nindent 6 }}
+      version: {{ .Values.image.tag }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,10 +20,11 @@ spec:
       {{- end }}
       labels:
         {{- include "cicd-image-deployment.selectorLabels" . | nindent 8 }}
+        version: {{ .Values.image.tag }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+      - name: surendhar-regsitry
       {{- end }}
       serviceAccountName: {{ include "cicd-image-deployment.serviceAccountName" . }}
       securityContext:
@@ -31,8 +33,8 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "docker.io/surendharselvakumar/alpine-cicd-image:{{ .Values.image.tag }}"
-          imagePullPolicy: "Always"
+          image: "surendharselvakumar/alpine-cicd-image:{{ .Values.image.tag }}"
+          imagePullPolicy: "IfNotPresent"
           env:
           - name: myname
             valueFrom: 

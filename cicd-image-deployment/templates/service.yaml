@@ -13,6 +13,7 @@ spec:
       
   selector:
     {{- include "cicd-image-deployment.selectorLabels" . | nindent 4 }}
+    version: {{ .Values.image.tag }}
    
 ---
    
@@ -29,4 +30,5 @@ spec:
       targetPort: {{ .Values.service.backendport }}
       protocol: TCP
   selector:
-    {{- include "cicd-image-deployment.selectorLabels" . | nindent 4 }}    
+    {{- include "cicd-image-deployment.selectorLabels" . | nindent 4 }}
+    version: {{ .Values.image.tag }}    

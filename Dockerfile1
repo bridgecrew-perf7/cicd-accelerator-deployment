@@ -6,7 +6,7 @@ RUN apk add nodejs npm curl supervisor
 
 ADD cicd-accelerator-frontend cicd-accelerator-frontend
 
-ADD cicd-accelerator-backend cicd-accelerator-backend
+COPY cicd-accelerator-backend cicd-accelerator-backend
 
 WORKDIR cicd-accelerator-backend
 
@@ -18,14 +18,20 @@ WORKDIR cicd-accelerator-frontend
 
 RUN npm install
 
-RUN npm run build
+WORKDIR /
 
-RUN npm install -g serve
+EXPOSE 3001 3000
 
 WORKDIR /
 
-EXPOSE 3001 5000
+RUN mkdir -p /opt/supervisor
 
-RUN mkdir -p /var/log/supervisor
+WORKDIR /
+
+RUN mkdir -p /var/log/cicd-logs
+
+WORKDIR /
+
+VOLUME /var/log/cicd-logs
 
 CMD ["supervisord", "-c", "/root/supervisord.conf"]
