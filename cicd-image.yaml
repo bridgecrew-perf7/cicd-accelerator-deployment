@@ -8,6 +8,43 @@ metadata:
 ---
 
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cicd-pv-volume
+  namespace: cicd-accelerator
+  labels:
+    name: cicd-image  
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  #persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: "/cicd-accelerator-backend/logs"
+    
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cicd-pv-claim
+  namespace: cicd-accelerator
+  labels:
+    name: cicd-image
+spec:  
+  storageClassName:  manual #hostpath #hostpath    
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+      
+---      
+
+apiVersion: v1
 data:
   name: surendhardevops
   url: 192.168.1.2
@@ -48,16 +85,23 @@ spec:
     metadata: 
       labels: 
         app: cicd-image
-    spec: 
+    spec:
+      volumes:
+        - name: cicd-pv-storage
+          persistentVolumeClaim:
+            claimName: cicd-pv-claim    
       containers: 
-        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.21"
-          imagePullPolicy: Always
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.19"
+          imagePullPolicy: IfNotPresent
           name: cicd-image
           ports: 
             - containerPort: 3000
               protocol: TCP
             - containerPort: 3001
-              protocol: TCP            
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/var/log/cicd-logs/"
+              name: cicd-pv-storage              
           env:
           - name: myname
             valueFrom: 
@@ -80,13 +124,11 @@ spec:
                 name: sqldb-secret
                 key: PASSWORD                
                 
-
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
   labels:
     app: cicd-image
   name: cicd-frontend-service
@@ -108,8 +150,7 @@ spec:
 
 apiVersion: v1
 kind: Service
-metadata:
-  annotations:
+metadata:  
   labels:
     app: cicd-image
   name: cicd-backend-service
