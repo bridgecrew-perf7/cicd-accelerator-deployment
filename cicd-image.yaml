@@ -111,7 +111,7 @@ spec:
             limits:
               cpu: 700m
             requests:
-              cpu: 200m
+              cpu: 200m #Requested is 200Mi, if needed the pod scales upto maximum value, and reaches the value of 700Mi cpu limits
           ports: 
             - containerPort: 3000
               protocol: TCP
@@ -199,7 +199,7 @@ metadata:
   namespace: cicd-accelerator
 spec:
   maxReplicas: 8
-  minReplicas: 2
+  minReplicas: 2 #Min replicas when the cpu is less than 200Mi, if the cpu increases more than 200Mi, then the replicas will scale upto 8 or maximum
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
