@@ -208,7 +208,7 @@ export default class AccordionList extends Component {
 					<Card>
 					<Card.Header>
 					  <Accordion.Toggle as={Button} variant="link" eventKey="3">
-						Deployment Server <span><a href="/deployServer"><AddCircleIcon /></a></span>
+						Deployment Server <span><a href="/deployServer"><AddCircleIcon id="deployServerIcon"/></a></span>
 					  </Accordion.Toggle>
 					</Card.Header>
 					<Accordion.Collapse eventKey="3">

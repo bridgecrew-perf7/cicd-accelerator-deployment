@@ -122,7 +122,7 @@ export default class DeployServer extends Component {
 						  Pipeline Name
 						</Form.Label>
 						<Col sm="5">
-						      <Form.Control as="select" custom onChange={this.clickEvent}>
+						      <Form.Control as="select" custom onChange={this.clickEvent} id="pipelineName">
 								<option> None </option>
 							  {
 								  this.state.pipelines.map(pipeline => 
@@ -137,7 +137,7 @@ export default class DeployServer extends Component {
 						  Deployment Type
 						</Form.Label>
 						<Col sm="5">
-						      <Form.Control as="select" custom onChange={this.setDeploymentType}>
+						      <Form.Control as="select" custom onChange={this.setDeploymentType} id="deploymentType">
 							  {
 								  this.state.deploymentType.map(deploymentType => 
 									 <option> { deploymentType.type } </option>									

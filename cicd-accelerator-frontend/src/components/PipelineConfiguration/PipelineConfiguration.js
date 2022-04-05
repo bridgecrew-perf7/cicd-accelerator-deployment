@@ -580,7 +580,7 @@ export default class PipelineConfiguration extends Component {
 							</Form.Control>
 						</Col>
 					  </Form.Group>
-					  <div style={{ display: `${this.state.displayConf}` }}>
+					  <div id="pipelineInput" style={{ display: `${this.state.displayConf}` }}>
 						  {/* 						  <Form.Group as={Row} controlId="scmName">
 							<Form.Label column sm="3">
 							  SCM Name

@@ -7,3 +7,6 @@ npm-debug.*
 cicd-accelerator-backend/*/*.log
 cicd-accelerator-frontend/.eslintcache
 cicd-accelerator-backend/package-lock.json
+cicd-accelerator-frontend/.scannerwork/*
+cicd-accelerator-backend/.scannerwork/*
+.scannerwork/* 

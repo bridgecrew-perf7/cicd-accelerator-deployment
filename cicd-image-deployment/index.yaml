@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  cicd-image-deployment:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-01-31T20:46:16.7144937+05:30"
+    description: A Helm chart for Kubernetes
+    digest: d6d33f280df3b5042e7e724b39bb0e0d43e34379e6b1fc7ff507d78390a04c93
+    name: cicd-image-deployment
+    type: application
+    urls:
+    - https://github.com/SurenPonnusamy/cicd-accelerator-deployment/blob/dev/cicd-image-deployment/cicd-image-deployment-0.1.0.tgz/cicd-image-deployment-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-01-31T20:46:16.700596+05:30"

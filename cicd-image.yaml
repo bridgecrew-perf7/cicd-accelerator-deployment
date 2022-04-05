@@ -23,7 +23,7 @@ spec:
   #persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: "/cicd-accelerator-backend/logs"
+    path: "/tmp"
     
 ---
 
@@ -77,7 +77,7 @@ metadata:
   name: cicd-image
   namespace: cicd-accelerator
 spec: 
-  replicas: 3
+  replicas: 1
   selector: 
     matchLabels: 
       app: cicd-image
@@ -91,9 +91,27 @@ spec:
           persistentVolumeClaim:
             claimName: cicd-pv-claim    
       containers: 
-        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.19"
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.25"
           imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |- 
+                  curl -s http://localhost:3001/api/getBuildServers | grep -c name #Container will restart on it's own, if this condition fails!
+            # httpGet:
+              # path: /api/getPipelines
+              # port: 3001
+              # scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 5
           name: cicd-image
+          resources:
+            limits:
+              cpu: 700m
+            requests:
+              cpu: 200m
           ports: 
             - containerPort: 3000
               protocol: TCP
@@ -168,6 +186,30 @@ spec:
     # ingress:
     # - hostname: localhost
     
+---
+
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cicd-image
+  namespace: cicd-accelerator
+spec:
+  maxReplicas: 8
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cicd-image
+  targetCPUUtilizationPercentage: 80
+status:
+  currentCPUUtilizationPercentage: 127
+  currentReplicas: 2
+  desiredReplicas: 4
+
 ---
 
 # apiVersion: networking.k8s.io/v1
