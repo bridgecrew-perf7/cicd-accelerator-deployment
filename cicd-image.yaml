@@ -11,7 +11,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: cicd-pv-volume
-  namespace: cicd-accelerator
+  #namespace: cicd-accelerator
   labels:
     name: cicd-image  
 spec:
@@ -30,7 +30,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: cicd-pv-claim
+  name: cicd-pv-claim 
   namespace: cicd-accelerator
   labels:
     name: cicd-image
@@ -106,6 +106,19 @@ spec:
               # scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 5
+            readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |- 
+                  curl -s http://localhost:3001/api/getBuildServers | grep -c name #Stops sending the traffic to pod, if this condition fails!
+            # httpGet:
+              # path: /api/getPipelines
+              # port: 3001
+              # scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 5
           name: cicd-image
           resources:
             limits:
@@ -158,7 +171,7 @@ spec:
     targetPort: 3000 #port exposed in docker container
   selector:
     app: cicd-image
-  type: LoadBalancer #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend. Preferrable is NodePort.
+  type: NodePort #LoadBalancer #NodePort #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend. Preferrable is NodePort.
 # status:
   # loadBalancer:
     # ingress:
@@ -180,7 +193,7 @@ spec:
     targetPort: 3001 #port exposed in docker container
   selector:
     app: cicd-image
-  type: LoadBalancer  #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend. Preferrable is NodePort.
+  type: NodePort #LoadBalancer #NodePort #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend. Preferrable is NodePort.
 # status:
   # loadBalancer:
     # ingress:
@@ -212,47 +225,65 @@ status:
 
 ---
 
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-  # name: minimal-ingress-backend
-  # namespace: cicd-accelerator
-  # annotations:
-    # nginx.ingress.kubernetes.io/rewrite-target: /
-# spec:
-  # rules:
-  # - host: surendharapp-backend.com 
-    # http:
-      # paths:
-      # - pathType: Prefix
-        # path: /
-        # backend:
-          # service:
-            # name: cicd-backend-service
-            # port:
-              # number: 3001
-              
-# ---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+  name: nginx-ingress-class
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+spec:
+  controller: k8s.io/ingress-nginx
 
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-  # name: minimal-ingress-frontend
-  # namespace: cicd-accelerator
-  # annotations:
-    # nginx.ingress.kubernetes.io/rewrite-target: /
-# spec:
-  # rules:
-  # - host: surendharapp-frontend.com 
-    # http:
-      # paths:
-      # - pathType: Prefix
-        # path: /
-        # backend:
-          # service:
-            # name: cicd-frontend-service
-            # port:
-              # number: 3003
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress-backend
+  namespace: cicd-accelerator
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx-ingress-class
+  rules:
+  - host: surendharapp-backend.com 
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: cicd-backend-service
+            port:
+              number: 3001
+              
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress-frontend
+  namespace: cicd-accelerator
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx-ingress-class
+  rules:
+  - host: surendharapp-frontend.com 
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: cicd-frontend-service
+            port:
+              number: 3003
+
+---
+              
 
 
 ##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              
