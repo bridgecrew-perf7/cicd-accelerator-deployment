@@ -1,0 +1,13 @@
+cicd-accelerator-frontend/node_modules/*
+cicd-accelerator-backend/node_modules/*
+dist/
+npm-debug.*
+*.xml
+*.txt
+cicd-accelerator-backend/*/*.log
+cicd-accelerator-frontend/.eslintcache
+cicd-accelerator-backend/package-lock.json
+cicd-accelerator-frontend/.scannerwork/*
+cicd-accelerator-backend/.scannerwork/*
+.scannerwork/* 
+cicd-accelerator-backend/logs/*

@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import axios from 'axios'
+import constants from '../Constants/serviceconstants'
 
 const login = {
 	background: "white",
@@ -39,8 +40,9 @@ export default class Login extends Component {
 	}
 	
 	componentDidMount() {
-		sessionStorage.clear()
- 		axios.get('http://localhost:3001/')
+		sessionStorage.clear()		
+		console.log('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/checkUser')
+ 		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/')
 		.then(resp => {
 			console.log(resp)
 			if(resp.data === null || resp.data === undefined) {
@@ -50,7 +52,7 @@ export default class Login extends Component {
 	}
 	
 	submit = () => {
-		axios.get('http://localhost:3001/api/checkUser', {
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/checkUser', {
 			params: {
 				username: this.state.username,
 				password: this.state.password

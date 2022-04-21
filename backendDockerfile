@@ -1,0 +1,25 @@
+FROM alpine:latest 
+
+RUN apk add nodejs npm curl supervisor
+
+COPY cicd-accelerator-backend cicd-accelerator-backend
+
+WORKDIR cicd-accelerator-backend
+
+RUN npm install
+
+WORKDIR /
+
+EXPOSE 3001
+
+WORKDIR /
+
+RUN mkdir -p /var/log/cicd-logs
+
+WORKDIR /
+
+VOLUME /var/log/cicd-logs
+
+WORKDIR cicd-accelerator-backend
+
+CMD ["npm", "start"]

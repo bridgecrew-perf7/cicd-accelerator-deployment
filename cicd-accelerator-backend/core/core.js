@@ -12,6 +12,8 @@ var js2xmlparser = require("js2xmlparser");
 
 var jenkinsapi = require('jenkins-api');
 
+const log = require('log-to-file');
+
 module.exports = {
 
 	addPipelineDetails: function(serverInputs, values, callback) {
@@ -26,15 +28,21 @@ module.exports = {
 		console.log(command);
 		congfigjson.json.scm.userRemoteConfigs["hudson.plugins.git.UserRemoteConfig"].url = values.data.pipelineInputs.scm.scmURL
 		congfigjson.json.scm.userRemoteConfigs["hudson.plugins.git.UserRemoteConfig"].credentialsId = 'git_creds'  		
-		congfigjson.json.builders["hudson.tasks.Shell"].command = command				
+		congfigjson.json.builders["hudson.tasks.Shell"].command = command	
+		//"sonar:sonar -Dsonar.projectKey=tomcat-application -Dsonar.host.url=http://172.18.0.3:9000 -Dsonar.login=2f8c3f01cbd92f74632c06a83308ce83221ade75"
+		var sonarcmd = "sonar:sonar -Dsonar.projectKey="+values.data.pipelineInputs.sonarqube.sonarKey+" -Dsonar.host.url="+values.data.pipelineInputs.sonarqube.sonarURL+" -Dsonar.login="+values.data.pipelineInputs.sonarqube.sonarLogin+""
+		congfigjson.json.builders["hudson.tasks.Maven"][1].targets = sonarcmd
 		var xml = js2xmlparser.parse("project", congfigjson.json)
 		var pipelineName = values.data.pipelineName	
         	jenkins.job.create(pipelineName, xml, function(err) {
 			if(err) {
 				console.log(err)
+				log(err, "./logs/cicd-logs.log",'\r\n')
 			}
 			else {
-				console.log('Job created')				
+				console.log('Job created')
+				var op = pipelineName + " Job has been created"
+				log(op, "./logs/cicd-logs.log",'\r\n')
 				callback('IComeFromCallback.js', null)				
 			}
 		})
@@ -48,8 +56,11 @@ module.exports = {
 		var pipelineName = values.pipelineName
 		jenkins.job.build(pipelineName, function(build_err, build_data) {
 			  if (build_err) throw build_err;
-				 
+				 log(build_err, "./logs/cicd-logs.log",'\r\n')
 			  console.log('queue item number', build_data);
+			  var op = pipelineName + " pipeline has been triggered"
+			  log(op, "./logs/cicd-logs.log",'\r\n')
+			  
 		});		
 
 	},
@@ -61,11 +72,12 @@ module.exports = {
 		jenkins.job.get(pipelineName, function(get_err, get_data) {
 			if(get_err) {
 				console.log(get_err)
+				log(get_err, "./logs/cicd-logs.log",'\r\n')
 			}
 			else {
 				var latestBuild = get_data.builds.length
  				jenkins.build.log(pipelineName,latestBuild, function(log_err, log_data) {
-					  if (log_err) throw callback(null, log_err);
+					  if (log_err) throw callback(null, log_err); log(log_err, "./logs/cicd-logs.log",'\r\n');
 						 
 					  //console.log('Log_data', log_data);
 					  var obj = [{
@@ -73,6 +85,7 @@ module.exports = {
 						  'latestBuild': latestBuild
 					  }]
 					  //console.log('obj', obj)
+					  log(obj, "./logs/cicd-logs.log",'\r\n')
 					  callback(obj, null)
 				});					
 			}
@@ -91,10 +104,12 @@ module.exports = {
 		jenkins.job.destroy(pipelineName, function(err) {
 			if(err) {
 				console.log(err);
+				log(err, "./logs/cicd-logs.log",'\r\n')
 				callback(null, err)
 			}
 			else {
 				console.log('Job has been deleted successfully')
+				log(pipelineName+" Job has been deleted successfully", "./logs/cicd-logs.log",'\r\n')
 				callback('Job Deleted', null)
 			}
 		})

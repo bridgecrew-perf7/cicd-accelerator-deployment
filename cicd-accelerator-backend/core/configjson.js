@@ -40,6 +40,13 @@ module.exports = {
             "settings": [],
             "globalSettings": [],
             "injectBuildVariables": "false"
+         },         
+		 {
+            "targets": "sonarCmd",
+            "usePrivateRepository": "false",
+            "settings": [],
+            "globalSettings": [],
+            "injectBuildVariables": "false"
          },
          {
             "targets": "package",

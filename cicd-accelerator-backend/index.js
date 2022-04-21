@@ -1,4 +1,5 @@
 var express = require('express');
+var CONSTANTS = require('./constants/serviceconstants.js')
 
 const app = express()
 
@@ -8,7 +9,7 @@ const routedata = require('./route/route.js')
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+  res.header("Access-Control-Allow-Methods", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   express.urlencoded({
     extended: true
@@ -34,6 +35,8 @@ app.get('/api/getPipelines', routedata.getPipelines);
 
 app.get('/api/getPipelineLogs/:pipelineName', routedata.getPipelineLogs);
 
+app.get('/api/getPipelineDetails', routedata.getPipelineDetails);
+
 app.post('/api/addPipelineDetails', routedata.addPipelineDetails);
 
 app.get('/hotels', routedata.getHotels);
@@ -44,8 +47,11 @@ app.delete('/api/deletePipeline/:name', routedata.deletePipeline)
 
 app.get('/api/triggerPipeline/:name', routedata.triggerPipeline)
 
+app.get('/api/readLogs', routedata.readLogs)
+
 app.get('/monument', (req, res) => {
 	console.log('Api monument')
+	console.log(CONSTANTS.logPath)
 	res.end(process.env.USERNAME)
 })
 

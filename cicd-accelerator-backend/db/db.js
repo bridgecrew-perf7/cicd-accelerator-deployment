@@ -1,8 +1,11 @@
 var mysql      = require('mysql');
 
 var connection = mysql.createConnection({
-  host     : 'localhost',
+  host     : process.env.myurl,
+  //host     : '192.168.1.4',
+  //user     : process.env.USERNAME,//'cicd_db_user',
   user     : 'cicd_db_user',
+  //password : process.env.PASSWORD,//'cicd_db_user',
   password : 'cicd_db_user',
   database : 'cicd_accelerator'
 });
@@ -28,6 +31,29 @@ module.exports = {
 		})
 		
 	},
+	
+	getPipelineDetails: function(pipelineName, callback) {
+		console.log('select buildserver, pipelineName, isSuccess from pipelineDetails where pipelineName = "'+pipelineName+'"')
+		connection.query('select buildserver, pipelineName, isSuccess from pipelineDetails where pipelineName = "'+pipelineName+'"', function(err, stdout) {
+			if(err) {
+				console.log(err)
+			}
+			else {
+				if(stdout.length === 1) {
+					var op = [{
+						'BuildServer': stdout[0].buildserver,
+						'PipelineName': stdout[0].pipelineName,
+						'isSuccess': stdout[0].isSuccess
+					}]
+					callback(op, null);
+				}
+				else {
+					callback(null, op);
+				}
+			}
+		})
+	},
+	
 	addBuildServer:  function(username, password, serverName, serverURL, callback) {
 		connection.query('insert into buildServer(username, password, serverName, serverURL) values ("'+username+'", "'+password+'", "'+serverName+'", "'+serverURL+'")', function(err, stdout) {
 			if(err) {
@@ -66,7 +92,6 @@ module.exports = {
 		var obj = {}
 		connection.query('select * from buildServer', function(err, stdout) {
 			if(err) {
-				console.log(err)
 				callback(err, null)
 			}
 			else {
@@ -77,15 +102,14 @@ module.exports = {
 						"key": stdout[i].SNo
 					}
 					servers.push(obj)
-				}
-				console.log(servers)
+				}				
 				callback((servers), null)
 			}
 		})
 	},
 	addPipelineDetails: function(pipelineName, buildServerName, pipelineInputs, callback) {
 		//console.log((pipelineInputs.data.pipelineInputs))
- 		connection.query("insert into pipelineDetails (buildServer, pipelineName, pipelineInputs) values ('"+buildServerName+"', '"+pipelineName+"', '"+JSON.stringify(pipelineInputs.data.pipelineInputs)+"')", function(err, stdout) {
+ 		connection.query("insert into pipelineDetails (buildServer, pipelineName, pipelineInputs, isSuccess) values ('"+buildServerName+"', '"+pipelineName+"', '"+JSON.stringify(pipelineInputs.data.pipelineInputs)+"', 'inprogress')", function(err, stdout) {
 			if(err) {
 				console.log(err)
 				callback(null, err)
@@ -93,11 +117,10 @@ module.exports = {
 			else {
 				console.log(pipelineName+" has been inserted into pipelineDetails")
 				connection.query("select a.username, a.password, a.serverURL from buildServer a, pipelineDetails b where a.serverName = b.buildServer and a.serverName ='"+buildServerName+"'", function(sererr, serout) {
-					if(sererr) {
-						console.log(sererr)
+					if(sererr) {						
+						callback(null, sererr);
 					}
-					else {
-						console.log(serout)
+					else {						
 						var ser_obj = {
 							"buildServerURL": serout[0].serverURL,
 							"buildServerUsername": serout[0].username,
@@ -111,8 +134,7 @@ module.exports = {
 	},
 	deleteBuildServer: function(buildServerName, callback) {
  		connection.query("delete from buildServer where serverName='"+buildServerName+"'", function(err, stdout) {
-			if(err) {
-				console.log(err)
+			if(err) {				
 				callback(null, err)
 			}
 			else {

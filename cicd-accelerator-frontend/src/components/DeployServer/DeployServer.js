@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import AccordionList from '../../AccordionList'
 import axios from 'axios'
+import constants from '../Constants/serviceconstants'
 
 const header = {
 	backgroundColor: "wheat",
@@ -83,7 +84,7 @@ export default class DeployServer extends Component {
 	}
 	
 	componentDidMount() {
-		axios.get('http://localhost:3001/api/getPipelines')
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/getPipelines')
 		.then(res => {
 			this.setState({
 				pipelines: res.data
@@ -122,11 +123,11 @@ export default class DeployServer extends Component {
 						  Pipeline Name
 						</Form.Label>
 						<Col sm="5">
-						      <Form.Control as="select" custom onChange={this.clickEvent}>
+						      <Form.Control as="select" custom onChange={this.clickEvent} id="pipelineName">
 								<option> None </option>
 							  {
 								  this.state.pipelines.map(pipeline => 
-									<option> { pipeline.pipelineName } </option>
+									<option> { pipeline.name } </option>
 								  )
 							  }
 							</Form.Control>
@@ -137,7 +138,7 @@ export default class DeployServer extends Component {
 						  Deployment Type
 						</Form.Label>
 						<Col sm="5">
-						      <Form.Control as="select" custom onChange={this.setDeploymentType}>
+						      <Form.Control as="select" custom onChange={this.setDeploymentType} id="deploymentType">
 							  {
 								  this.state.deploymentType.map(deploymentType => 
 									 <option> { deploymentType.type } </option>									

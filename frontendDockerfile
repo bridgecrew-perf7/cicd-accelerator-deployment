@@ -1,0 +1,17 @@
+FROM alpine:latest 
+
+RUN apk add nodejs npm curl supervisor
+
+COPY cicd-accelerator-frontend cicd-accelerator-frontend
+
+WORKDIR cicd-accelerator-frontend
+
+RUN npm install
+
+WORKDIR /
+
+EXPOSE 3000
+
+WORKDIR cicd-accelerator-frontend
+
+CMD ["npm", "start"]

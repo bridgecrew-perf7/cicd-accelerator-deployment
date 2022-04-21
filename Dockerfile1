@@ -1,6 +1,6 @@
 FROM alpine:latest 
 
-ADD supervisor.conf /root/supervisor.conf
+ADD supervisord.conf /root/supervisord.conf
 
 RUN apk add nodejs npm curl supervisor
 
@@ -18,14 +18,20 @@ WORKDIR cicd-accelerator-frontend
 
 RUN npm install
 
-#RUN npm run build
-
-#RUN npm install -g serve
-
 WORKDIR /
 
 EXPOSE 3001 3000
 
-RUN mkdir -p /var/log/supervisor
+WORKDIR /
 
-CMD ["supervisord", "-c", "/root/supervisor.conf"]
+RUN mkdir -p /opt/supervisor
+
+WORKDIR /
+
+RUN mkdir -p /var/log/cicd-logs
+
+WORKDIR /
+
+VOLUME /var/log/cicd-logs
+
+CMD ["supervisord", "-c", "/root/supervisord.conf"]

@@ -8,6 +8,7 @@ import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import EditIcon from '@material-ui/icons/Edit';
 import Modal from 'react-bootstrap/Modal'
 import axios from 'axios'
+import constants from './components/Constants/serviceconstants'
 
 
 export default class AccordionList extends Component {
@@ -38,7 +39,7 @@ export default class AccordionList extends Component {
 	
 	componentDidMount() {
 		
-		axios.get('http://localhost:3001/api/getBuildServers')
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/getBuildServers')
 		.then(res => {			
 			this.setState({
 				buildServers: res.data
@@ -46,7 +47,7 @@ export default class AccordionList extends Component {
 			//console.log(this.state.buildServers)
 		})
 		
-		axios.get('http://localhost:3001/api/getPipelines')
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/getPipelines')
 		.then(res => {
 			//console.log(res.data)
 			this.setState({
@@ -74,8 +75,8 @@ export default class AccordionList extends Component {
 	}
 	
 	deletePipeline(item) {
-		//axios.delete('http://localhost:3001/api/deletePipeline/'+item.name).then(res => {console.log(res)})		
-		console.log(item)
+		axios.delete('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/deletePipeline/'+item).then(res => {console.log(res)})
+		//alert(item)
 	}
 	
 	triggerConfirmation(item, e) {
@@ -93,7 +94,7 @@ export default class AccordionList extends Component {
 	}
 	
 	triggerPipeline(item) {
-		axios.get('http://localhost:3001/api/triggerPipeline/'+item).then(res => {console.log(res)})
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/triggerPipeline/'+item).then(res => {console.log(res)})
 	}
 	
 	
@@ -102,7 +103,7 @@ export default class AccordionList extends Component {
 		var modal = this.state.modal;
 		
 		const buildServer = this.state.buildServers.map(buildServer => 
-			<p key={buildServer.key} > { buildServer.name } <span onClick={(e) => axios.delete('http://localhost:3001/api/deleteBuildServer/'+buildServer.name).then(res => {console.log(res)})}><CancelIcon color='error'/></span></p>  
+			<p key={buildServer.key} > { buildServer.name } <span onClick={(e) => axios.delete('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/deleteBuildServer/'+buildServer.name).then(res => {console.log(res)})}><CancelIcon color='error'/></span></p>  
 		)
 		
 		const pipeline = this.state.pipelines.map((item, index) => 
@@ -208,7 +209,7 @@ export default class AccordionList extends Component {
 					<Card>
 					<Card.Header>
 					  <Accordion.Toggle as={Button} variant="link" eventKey="3">
-						Deployment Server <span><a href="/deployServer"><AddCircleIcon /></a></span>
+						Deployment Server <span><a href="/deployServer"><AddCircleIcon id="deployServerIcon"/></a></span>
 					  </Accordion.Toggle>
 					</Card.Header>
 					<Accordion.Collapse eventKey="3">
