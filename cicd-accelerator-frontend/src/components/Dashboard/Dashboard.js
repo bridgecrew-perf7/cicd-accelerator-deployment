@@ -12,6 +12,7 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import axios from 'axios'
+import constants from '../Constants/serviceconstants'
 
 export default class Dashboard extends Component {
 	
@@ -30,7 +31,7 @@ export default class Dashboard extends Component {
 	}
 	
 	modalDisplay = (e) => {
-		axios.get('http://localhost:3001/api/getPipelineLogs/'+e.name)
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/getPipelineLogs/'+e.name)
 		.then(res => {
 			console.log(res.data)
 			 this.setState({
@@ -62,7 +63,7 @@ export default class Dashboard extends Component {
 	}
 	
 	componentDidMount(){
-		axios.get('http://localhost:3001/api/getPipelines')
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/getPipelines')
 		.then(res => {
 			//console.log(res.data)
 			 this.setState({

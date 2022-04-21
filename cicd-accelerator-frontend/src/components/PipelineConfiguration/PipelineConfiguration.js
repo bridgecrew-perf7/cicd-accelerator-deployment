@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import AccordionList from '../../AccordionList'
 import axios from 'axios'
+import constants from '../Constants/serviceconstants'
 
 const header = {
 	backgroundColor: "wheat",
@@ -324,14 +325,14 @@ export default class PipelineConfiguration extends Component {
 	}
 	
 	componentDidMount() {
-		axios.get('http://localhost:3001/api/getPipelines')
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/getPipelines')
 		.then(res => {
 			this.setState({
 				pipelineName: res.data
 			})
 		})
 		
-		axios.get('http://localhost:3001/api/getBuildServers')
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/getBuildServers')
 		.then(res => {
 			this.setState({
 				buildServers: res.data
@@ -370,7 +371,7 @@ export default class PipelineConfiguration extends Component {
 			}
 		}
 		console.log(this.pipelineConf)
- 		axios.post('http://localhost:3001/api/addPipelineDetails', {
+ 		axios.post('http://constants.BACKENDLOCALHOST:constants.BACKENDPORT/api/addPipelineDetails', {
 			data: this.pipelineConf
 	})
 	}	

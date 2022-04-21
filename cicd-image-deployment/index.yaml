@@ -10,5 +10,5 @@ entries:
     type: application
     urls:
     - https://github.com/SurenPonnusamy/cicd-accelerator-deployment/blob/dev/cicd-image-deployment/cicd-image-deployment-0.1.0.tgz/cicd-image-deployment-0.1.0.tgz
-    version: 0.1.0
+    version: 0.2.0
 generated: "2022-01-31T20:46:16.700596+05:30"

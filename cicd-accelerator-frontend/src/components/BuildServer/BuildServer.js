@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import AccordionList from '../../AccordionList'
 import axios from 'axios'
+import constants from '../Constants/serviceconstants'
 
 const header = {
 	backgroundColor: "wheat",
@@ -55,7 +56,7 @@ export default class BuildServer extends Component {
 		const data = this.buildServerDetails
 		
 		console.log(data)
-  		axios.get('http://localhost:3001/api/addBuildServer', {
+  		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/addBuildServer', {
 			params: {
 				data: data
 			}
@@ -72,7 +73,7 @@ export default class BuildServer extends Component {
 		
 		const data = this.buildServerName
 		
-	axios.get('http://localhost:3001/api/checkServerName', {
+	axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/checkServerName', {
 		params: {
 			serverName: this.buildServerName
 		}

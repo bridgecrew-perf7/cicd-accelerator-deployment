@@ -1,9 +1,8 @@
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-  host     : '127.0.0.1',
-  user     : 'cicd_user',
-  password : 'cicd_user',
-  port	   : '3311'
+  host     : '172.26.208.1',
+  user     : 'root',
+  password : 'admin@123'
 });
  
 ///connection.connect();

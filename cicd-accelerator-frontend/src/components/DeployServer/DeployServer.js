@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import AccordionList from '../../AccordionList'
 import axios from 'axios'
+import constants from '../Constants/serviceconstants'
 
 const header = {
 	backgroundColor: "wheat",
@@ -83,7 +84,7 @@ export default class DeployServer extends Component {
 	}
 	
 	componentDidMount() {
-		axios.get('http://localhost:3001/api/getPipelines')
+		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/getPipelines')
 		.then(res => {
 			this.setState({
 				pipelines: res.data

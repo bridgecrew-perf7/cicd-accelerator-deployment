@@ -1,8 +1,8 @@
 var mysql      = require('mysql');
 
 var connection = mysql.createConnection({
-  //host     : process.env.myurl,
-  host     : '192.168.1.2',
+  host     : process.env.myurl,
+  //host     : '192.168.1.4',
   //user     : process.env.USERNAME,//'cicd_db_user',
   user     : 'cicd_db_user',
   //password : process.env.PASSWORD,//'cicd_db_user',
@@ -92,7 +92,6 @@ module.exports = {
 		var obj = {}
 		connection.query('select * from buildServer', function(err, stdout) {
 			if(err) {
-				console.log(err)
 				callback(err, null)
 			}
 			else {
@@ -103,8 +102,7 @@ module.exports = {
 						"key": stdout[i].SNo
 					}
 					servers.push(obj)
-				}
-				console.log(servers)
+				}				
 				callback((servers), null)
 			}
 		})
@@ -119,11 +117,10 @@ module.exports = {
 			else {
 				console.log(pipelineName+" has been inserted into pipelineDetails")
 				connection.query("select a.username, a.password, a.serverURL from buildServer a, pipelineDetails b where a.serverName = b.buildServer and a.serverName ='"+buildServerName+"'", function(sererr, serout) {
-					if(sererr) {
-						console.log(sererr)
+					if(sererr) {						
+						callback(null, sererr);
 					}
-					else {
-						console.log(serout)
+					else {						
 						var ser_obj = {
 							"buildServerURL": serout[0].serverURL,
 							"buildServerUsername": serout[0].username,
@@ -137,8 +134,7 @@ module.exports = {
 	},
 	deleteBuildServer: function(buildServerName, callback) {
  		connection.query("delete from buildServer where serverName='"+buildServerName+"'", function(err, stdout) {
-			if(err) {
-				console.log(err)
+			if(err) {				
 				callback(null, err)
 			}
 			else {
