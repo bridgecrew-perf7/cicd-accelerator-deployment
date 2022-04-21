@@ -49,21 +49,5 @@ pipeline {
 				'''
             }
         }
-	stage ('Replace tag in yaml file') {
-	  steps {
-		sh 'cd $WORKSPACE'
-		sh 'sed -i "s/image-version/${image_name}/g" cicd-image.yml'
-		sh 'sed -i "s/tag-version/${tag_name}/g" cicd-image.yml'
-	  }
-	}
-	stage ('Deploy yaml in cluster') {
-	  when {
-	    expression { params.deploymentType == "kubernetes" }
-	  }
-	  steps {
-	  	sh 'cd $WORKSPACE'
-		sh 'cat cicd-image.yml'
-	  }
-	 }
     }
 }
