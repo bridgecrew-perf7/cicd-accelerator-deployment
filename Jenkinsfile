@@ -5,7 +5,7 @@ pipeline {
         string defaultValue: 'cicd-frontend', name: 'cicd_frontend_image_name'
         string defaultValue: '1.0.0', name: 'cicd_frontend_tag_name'
 	string defaultValue: 'cicd-backend', name: 'cicd_backend_image_name'
-        string defaultValue: '1.0.0', name: 'cicd_backend_tag_name    
+        string defaultValue: '1.0.0', name: 'cicd_backend_tag_name'    
         string defaultValue: 'surendharselvakumar', name: 'docker_repo'
     }
     
