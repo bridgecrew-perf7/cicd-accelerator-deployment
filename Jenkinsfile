@@ -39,7 +39,7 @@ pipeline {
                 withDockerRegistry(credentialsId: 'docker_creds', url: 'https://index.docker.io/v1/') {
 		    sh '''
 			cd $WORKSPACE/
-			docker build -t ${cicd_frontend_image_name}:${cicd_frontend_tag_name} .
+			docker build -t ${cicd_frontend_image_name}:${cicd_frontend_tag_name} -f frontendDockerfile .
 			docker tag ${cicd_frontend_image_name}:${cicd_frontend_tag_name} ${docker_repo}/${cicd_frontend_image_name}:${cicd_frontend_tag_name}
 		    '''
 		}
@@ -58,7 +58,7 @@ pipeline {
                 withDockerRegistry(credentialsId: 'docker_creds', url: 'https://index.docker.io/v1/') {
 		    sh '''
 			cd $WORKSPACE/
-			docker build -t ${cicd_backend_image_name}:${cicd_backend_tag_name} .
+			docker build -t ${cicd_backend_image_name}:${cicd_backend_tag_name} -f backendDockerfile .
 			docker tag ${cicd_backend_image_name}:${cicd_backend_tag_name} ${docker_repo}/${cicd_backend_image_name}:${cicd_backend_tag_name}
 		    '''
 		}
