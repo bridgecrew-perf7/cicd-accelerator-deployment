@@ -1,0 +1,166 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cicd-accelerator
+  labels:
+    name: cicd-image
+
+---
+
+apiVersion: v1
+data:
+  name: surendhardevops
+  url: localhost
+kind: ConfigMap
+metadata:
+  name: cicd-config
+  namespace: cicd-accelerator
+  labels:
+    name: cicd-image
+
+---
+
+apiVersion: v1
+data:
+  PASSWORD: YWRtaW5AMTIz
+  USERNAME: cm9vdA==
+kind: Secret
+metadata:
+  name: sqldb-secret
+  namespace: cicd-accelerator
+type: Opaque
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  labels: 
+    app: cicd-image
+  name: cicd-image
+  namespace: cicd-accelerator
+spec: 
+  replicas: 3
+  selector: 
+    matchLabels: 
+      app: cicd-image
+  template: 
+    metadata: 
+      labels: 
+        app: cicd-image
+    spec: 
+      containers: 
+        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.8"
+          imagePullPolicy: Always
+          name: cicd-image
+          ports: 
+            - containerPort: 3000
+              protocol: TCP
+            - containerPort: 3001
+              protocol: TCP            
+          env:
+          - name: myname
+            valueFrom: 
+              configMapKeyRef:
+                name: cicd-config
+                key: name
+          - name: myurl
+            valueFrom:
+              configMapKeyRef:
+                name: cicd-config
+                key: url
+          - name: USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: sqldb-secret
+                key: USERNAME
+          - name: PASSWORD
+            valueFrom: 
+              secretKeyRef:
+                name: sqldb-secret
+                key: PASSWORD                
+                
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  labels:
+    app: cicd-image
+  name: cicd-frontend-service
+  namespace: cicd-accelerator
+spec:
+  ports:
+  - port: 3003 #port accessing in the server
+    protocol: TCP
+    targetPort: 5000 #port exposed in docker container
+  selector:
+    app: cicd-image
+  type: ClusterIP #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
+
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  labels:
+    app: cicd-image
+  name: cicd-backend-service
+  namespace: cicd-accelerator
+spec:
+  ports:
+  - port: 3001 #port accessing in the server
+    protocol: TCP
+    targetPort: 3001 #port exposed in docker container
+  selector:
+    app: cicd-image
+  type: ClusterIP  #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend
+
+    
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress-backend
+  namespace: cicd-accelerator
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: surendharapp-backend.com 
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: cicd-backend-service
+            port:
+              number: 3001
+              
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress-frontend
+  namespace: cicd-accelerator
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: surendharapp-frontend.com 
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: cicd-frontend-service
+            port:
+              number: 3003

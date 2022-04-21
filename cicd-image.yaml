@@ -73,61 +73,49 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: 
   labels: 
-    app: cicd-image
-  name: cicd-image
+    app: cicd-image-backend
+  name: cicd-image-backend
   namespace: cicd-accelerator
 spec: 
   replicas: 1
   selector: 
     matchLabels: 
-      app: cicd-image
+      app: cicd-image-backend
   template: 
     metadata: 
       labels: 
-        app: cicd-image
+        app: cicd-image-backend
     spec:
       volumes:
         - name: cicd-pv-storage
           persistentVolumeClaim:
             claimName: cicd-pv-claim    
       containers: 
-        - image: "docker.io/surendharselvakumar/alpine-cicd-image:1.0.27"
+        - image: "docker.io/surendharselvakumar/cicd-backend:1.0.0"
           imagePullPolicy: IfNotPresent
           livenessProbe:
             exec:
               command:
                 - sh
                 - -c
-                - |- 
-                  curl -s http://localhost:3001/api/getBuildServers | grep -c name #Container will restart on it's own, if this condition fails!
-            # httpGet:
-              # path: /api/getPipelines
-              # port: 3001
-              # scheme: HTTP
+                - curl -s http://localhost:3001/api/getBuildServers | grep -c name #Container will restart on it's own, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5
-            readinessProbe:
+          readinessProbe:
             exec:
               command:
                 - sh
                 - -c
-                - |- 
-                  curl -s http://localhost:3001/api/getBuildServers | grep -c name #Stops sending the traffic to pod, if this condition fails!
-            # httpGet:
-              # path: /api/getPipelines
-              # port: 3001
-              # scheme: HTTP
+                - curl -s http://localhost:3001/api/getBuildServers | grep -c name #Stops sending the traffic to pod, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5
-          name: cicd-image
+          name: cicd-image-backend-resources
           resources:
             limits:
               cpu: 700m
             requests:
               cpu: 200m #Requested is 200Mi, if needed the pod scales upto maximum value, and reaches the value of 700Mi cpu limits
           ports: 
-            - containerPort: 3000
-              protocol: TCP
             - containerPort: 3001
               protocol: TCP
           volumeMounts:
@@ -157,11 +145,57 @@ spec:
                 
 ---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  labels: 
+    app: cicd-image-frontend
+  name: cicd-image-frontend
+  namespace: cicd-accelerator
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: cicd-image-frontend
+  template: 
+    metadata: 
+      labels: 
+        app: cicd-image-frontend
+    spec:  
+      containers: 
+        - image: "docker.io/surendharselvakumar/cicd-frontend:1.0.0"
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            tcpSocket:
+              port: 3000 #Container will restart on it's own, if this condition fails!
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |-
+                  curl -s http://localhost:3000/home | grep -c name #Stops sending the traffic to pod, if this condition fails!
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          name: cicd-image-frontend-resources
+          resources:
+            limits:
+              cpu: 700m
+            requests:
+              cpu: 200m #Requested is 200Mi, if needed the pod scales upto maximum value, and reaches the value of 700Mi cpu limits
+          ports: 
+            - containerPort: 3000
+              protocol: TCP
+
+---
+
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: cicd-image
+    app: cicd-image-frontend
   name: cicd-frontend-service
   namespace: cicd-accelerator
 spec:
@@ -170,8 +204,8 @@ spec:
     protocol: TCP
     targetPort: 3000 #port exposed in docker container
   selector:
-    app: cicd-image
-  type: NodePort #LoadBalancer #NodePort #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend. Preferrable is NodePort.
+    app: cicd-image-frontend
+  type: LoadBalancer #LoadBalancer #NodePort #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend. Preferrable is NodePort.
 # status:
   # loadBalancer:
     # ingress:
@@ -191,8 +225,9 @@ spec:
   - port: 3001 #port accessing in the server
     protocol: TCP
     targetPort: 3001 #port exposed in docker container
+    nodePort: 30023
   selector:
-    app: cicd-image
+    app: cicd-image-backend
   type: NodePort #LoadBalancer #NodePort #Using LoadBalancer type to test in the dev envi, can be changed to NodePort or ClusterIP and modify the ingress hostname to access the backend-service in the frontend. Preferrable is NodePort.
 # status:
   # loadBalancer:
@@ -208,7 +243,7 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: cicd-image
+  name: cicd-image-backend
   namespace: cicd-accelerator
 spec:
   maxReplicas: 8
@@ -216,83 +251,103 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: cicd-image
+    name: cicd-image-backend
   targetCPUUtilizationPercentage: 80
-status:
-  currentCPUUtilizationPercentage: 127
-  currentReplicas: 2
-  desiredReplicas: 4
+# status:
+  # currentCPUUtilizationPercentage: 127
+  # currentReplicas: 2
+  # desiredReplicas: 4
 
 ---
 
-apiVersion: networking.k8s.io/v1
-kind: IngressClass
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
 metadata:
-  labels:
-    app.kubernetes.io/component: controller
-  name: nginx-ingress-class
-  annotations:
-    ingressclass.kubernetes.io/is-default-class: "true"
-spec:
-  controller: k8s.io/ingress-nginx
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: minimal-ingress-backend
+  name: cicd-image-frontend
   namespace: cicd-accelerator
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx-ingress-class
-  defaultBackend:
-    service:
-      name: cicd-backend-service
-      port:
-        number: 3001
-  rules:
-  - host: surendharapp-backend.com 
-    http:
-      paths:
-      - pathType: Prefix
-        path: /
-        backend:
-          service:
-            name: cicd-backend-service
-            port:
-              number: 3001
+  maxReplicas: 8
+  minReplicas: 2 #Min replicas when the cpu is less than 200Mi, if the cpu increases more than 200Mi, then the replicas will scale upto 8 or maximum
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cicd-image-frontend
+  targetCPUUtilizationPercentage: 80
+# status:
+  # currentCPUUtilizationPercentage: 127
+  # currentReplicas: 2
+  # desiredReplicas: 4
+
+---
+
+# apiVersion: networking.k8s.io/v1
+# kind: IngressClass
+# metadata:
+  # labels:
+    # app.kubernetes.io/component: controller
+  # name: nginx-ingress-class
+  # annotations:
+    # ingressclass.kubernetes.io/is-default-class: "true"
+# spec:
+  # controller: k8s.io/ingress-nginx
+
+# ---
+
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+  # name: minimal-ingress-backend
+  # namespace: cicd-accelerator
+  # annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+  # ingressClassName: nginx-ingress-class
+  # defaultBackend:
+    # service:
+      # name: cicd-backend-service
+      # port:
+        # number: 3001
+  # rules:
+  # - host: surendharapp-backend.com 
+    # http:
+      # paths:
+      # - pathType: Prefix
+        # path: /
+        # backend:
+          # service:
+            # name: cicd-backend-service
+            # port:
+              # number: 3001
               
----
+# ---
 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: minimal-ingress-frontend
-  namespace: cicd-accelerator
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx-ingress-class
-  defaultBackend:
-    service:
-      name: cicd-frontend-service
-      port:
-        number: 3003 
-  rules:
-  - host: surendharapp-frontend.com 
-    http:
-      paths:
-      - pathType: Prefix
-        path: /
-        backend:
-          service:
-            name: cicd-frontend-service
-            port:
-              number: 3003
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+  # name: minimal-ingress-frontend
+  # namespace: cicd-accelerator
+  # annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+  # ingressClassName: nginx-ingress-class
+  # defaultBackend:
+    # service:
+      # name: cicd-frontend-service
+      # port:
+        # number: 3003 
+  # rules:
+  # - host: surendharapp-frontend.com 
+    # http:
+      # paths:
+      # - pathType: Prefix
+        # path: /
+        # backend:
+          # service:
+            # name: cicd-frontend-service
+            # port:
+              # number: 3003
 
----
+# ---
               
 
 
