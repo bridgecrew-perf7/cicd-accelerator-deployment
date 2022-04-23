@@ -280,6 +280,40 @@ spec:
 
 ---
 
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: cicd-backend-pdb
+  namespace: cicd-accelerator
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: cicd-image-backend
+status:
+  currentHealthy: 2
+  desiredHealthy: 2
+  disruptionsAllowed: 0
+  expectedPods: 2
+
+---
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: cicd-backend-pdb
+  namespace: cicd-accelerator
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: cicd-image-backend
+status:
+  currentHealthy: 2
+  desiredHealthy: 2
+  disruptionsAllowed: 0
+  expectedPods: 2  
+  
 # apiVersion: networking.k8s.io/v1
 # kind: IngressClass
 # metadata:
