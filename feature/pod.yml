@@ -1,0 +1,163 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cicd-accelerator
+  labels:
+    name: cicd-image
+   
+---
+   
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cicd-pv-volume
+  #namespace: cicd-accelerator
+  labels:
+    name: cicd-image  
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  #persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: "/tmp"
+    
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cicd-pv-claim 
+  namespace: cicd-accelerator
+  labels:
+    name: cicd-image
+spec:  
+  storageClassName:  manual #hostpath #hostpath    
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+      
+---      
+
+apiVersion: v1
+data:
+  name: surendhardevops
+  url: 192.168.1.4
+kind: ConfigMap
+metadata:
+  name: cicd-config
+  namespace: cicd-accelerator
+  labels:
+    name: cicd-image
+
+---
+
+apiVersion: v1
+data:
+  PASSWORD: Y2ljZF9kYl91c2Vy #YWRtaW5AMTIz
+  USERNAME: Y2ljZF9kYl91c2Vy #cm9vdA==
+kind: Secret
+metadata:
+  name: sqldb-secret
+  namespace: cicd-accelerator
+type: Opaque
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicd-backend
+  namespace: cicd-accelerator
+spec:
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: cicd-image-backend
+  template: 
+    metadata: 
+      labels: 
+        app: cicd-image-backend
+    spec:
+      volumes:
+        - name: backend-volume
+          persistentVolumeClaim:
+            claimName: cicd-pv-claim
+      containers:
+        - name: sidecar-containers
+          image: 'docker.io/surendharselvakumar/logstash:latest'
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 9600
+            protocol: TCP          
+          - containerPort: 5044
+            protocol: TCP      
+          - containerPort: 3001
+            protocol: TCP      
+          volumeMounts:
+            - name: backend-volume
+              mountPath: /var/log/cicd-logs  
+        - name: cicd-backend-container
+          image: 'docker.io/surendharselvakumar/cicd-backend:1.0.1'
+          volumeMounts:
+            - name: backend-volume
+              mountPath: /var/log/cicd-logs
+          
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cicd-accelerator
+  name: cicd-log-backend-service
+  namespace: cicd-accelerator
+spec:
+  ports:
+  - port: 9600
+    protocol: TCP
+    targetPort: 9600
+  selector:
+    app: cicd-image-backend
+  type: LoadBalancer
+  
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+  # labels:
+    # app: cicd-accelerator
+  # name: cicd-5044-backend-service
+  # namespace: cicd-accelerator
+# spec:
+  # ports:
+  # - port: 5044
+    # protocol: TCP
+    # targetPort: 5044
+  # selector:
+    # app: cicd-image-backend
+  # type: LoadBalancer
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cicd-accelerator
+  name: cicd-app-backend-service
+  namespace: cicd-accelerator
+spec:
+  ports:
+  - port: 3001
+    protocol: TCP
+    targetPort: 3001
+  selector:
+    app: cicd-image-backend
+  type: LoadBalancer
