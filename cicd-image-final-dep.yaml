@@ -67,16 +67,90 @@ metadata:
   namespace: cicd-accelerator
 type: Opaque
 
+# ---
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata: 
+  # labels: 
+    # app: cicd-image-backend
+  # name: cicd-image-backend
+  # namespace: cicd-accelerator
+# spec: 
+  # replicas: 1
+  # selector: 
+    # matchLabels: 
+      # app: cicd-image-backend
+  # template: 
+    # metadata: 
+      # labels: 
+        # app: cicd-image-backend
+    # spec:
+      # volumes:
+        # - name: cicd-pv-storage
+          # persistentVolumeClaim:
+            # claimName: cicd-pv-claim    
+      # containers: 
+        # - image: "docker.io/surendharselvakumar/cicd-backend:1.0.0"
+          # imagePullPolicy: IfNotPresent
+          # livenessProbe:
+            # exec:
+              # command:
+                # - sh
+                # - -c
+                # - curl -s http://localhost:3001/api/getBuildServers | grep -c name #Container will restart on it's own, if this condition fails!
+            # initialDelaySeconds: 15
+            # periodSeconds: 5
+          # readinessProbe:
+            # exec:
+              # command:
+                # - sh
+                # - -c
+                # - curl -s http://localhost:3001/api/getBuildServers | grep -c name #Stops sending the traffic to pod, if this condition fails!
+            # initialDelaySeconds: 15
+            # periodSeconds: 5
+          # name: cicd-image-backend-resources
+          # resources:
+            # limits:
+              # cpu: 700m
+            # requests:
+              # cpu: 200m #Requested is 200Mi, if needed the pod scales upto maximum value, and reaches the value of 700Mi cpu limits
+          # ports: 
+            # - containerPort: 3001
+              # protocol: TCP
+          # volumeMounts:
+            # - mountPath: "/var/log/cicd-logs/"
+              # name: cicd-pv-storage              
+          # env:
+          # - name: myname
+            # valueFrom: 
+              # configMapKeyRef:
+                # name: cicd-config
+                # key: name
+          # - name: myurl
+            # valueFrom:
+              # configMapKeyRef:
+                # name: cicd-config
+                # key: url
+          # - name: USERNAME
+            # valueFrom:
+              # secretKeyRef:
+                # name: sqldb-secret
+                # key: USERNAME
+          # - name: PASSWORD
+            # valueFrom: 
+              # secretKeyRef:
+                # name: sqldb-secret
+                # key: PASSWORD                
+                
 ---
 
 apiVersion: apps/v1
 kind: Deployment
-metadata: 
-  labels: 
-    app: cicd-image-backend
+metadata:
   name: cicd-image-backend
   namespace: cicd-accelerator
-spec: 
+spec:
   replicas: 1
   selector: 
     matchLabels: 
@@ -87,18 +161,34 @@ spec:
         app: cicd-image-backend
     spec:
       volumes:
-        - name: cicd-pv-storage
+        - name: backend-volume
           persistentVolumeClaim:
-            claimName: cicd-pv-claim    
-      containers: 
-        - image: "docker.io/surendharselvakumar/cicd-backend:1.0.0"
+            claimName: cicd-pv-claim
+      containers:
+        - name: sidecar-containers
+          image: 'docker.io/surendharselvakumar/logstash:latest'
           imagePullPolicy: IfNotPresent
+          name: cicd-image-logs-resources
+          resources:
+            limits:
+              cpu: 700m
+            requests:
+              cpu: 200m          
+          ports:
+          - containerPort: 9600
+            protocol: TCP          
+          - containerPort: 5044
+            protocol: TCP      
+          - containerPort: 3001
+            protocol: TCP      
+          volumeMounts:
+            - name: backend-volume
+              mountPath: /var/log/cicd-logs  
+        - name: cicd-backend-container
+          image: 'docker.io/surendharselvakumar/cicd-backend:1.0.1'		  
           livenessProbe:
-            exec:
-              command:
-                - sh
-                - -c
-                - curl -s http://localhost:3001/api/getBuildServers | grep -c name #Container will restart on it's own, if this condition fails!
+            tcpSocket:
+              port: 3001 #Container will restart on it's own, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5
           readinessProbe:
@@ -106,7 +196,8 @@ spec:
               command:
                 - sh
                 - -c
-                - curl -s http://localhost:3001/api/getBuildServers | grep -c name #Stops sending the traffic to pod, if this condition fails!
+                - |-
+                  curl -s http://localhost:3001/api/getBuildServers | grep -c name  #Stops sending the traffic to pod, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5
           name: cicd-image-backend-resources
@@ -114,13 +205,13 @@ spec:
             limits:
               cpu: 700m
             requests:
-              cpu: 200m #Requested is 200Mi, if needed the pod scales upto maximum value, and reaches the value of 700Mi cpu limits
+              cpu: 200m			
           ports: 
             - containerPort: 3001
-              protocol: TCP
+              protocol: TCP			
           volumeMounts:
-            - mountPath: "/var/log/cicd-logs/"
-              name: cicd-pv-storage              
+            - name: backend-volume
+              mountPath: /var/log/cicd-logs
           env:
           - name: myname
             valueFrom: 
@@ -141,8 +232,8 @@ spec:
             valueFrom: 
               secretKeyRef:
                 name: sqldb-secret
-                key: PASSWORD                
-                
+                key: PASSWORD			  
+
 ---
 
 apiVersion: apps/v1
@@ -312,7 +403,7 @@ status:
   currentHealthy: 2
   desiredHealthy: 2
   disruptionsAllowed: 0
-  expectedPods: 2  
+  expectedPods: 2   
   
 # apiVersion: networking.k8s.io/v1
 # kind: IngressClass

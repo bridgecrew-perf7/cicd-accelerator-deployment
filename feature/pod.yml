@@ -125,24 +125,6 @@ spec:
   selector:
     app: cicd-image-backend
   type: LoadBalancer
-  
-# ---
-
-# apiVersion: v1
-# kind: Service
-# metadata:
-  # labels:
-    # app: cicd-accelerator
-  # name: cicd-5044-backend-service
-  # namespace: cicd-accelerator
-# spec:
-  # ports:
-  # - port: 5044
-    # protocol: TCP
-    # targetPort: 5044
-  # selector:
-    # app: cicd-image-backend
-  # type: LoadBalancer
     
 ---
 
