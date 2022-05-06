@@ -3,10 +3,10 @@ var mysql      = require('mysql');
 var connection = mysql.createConnection({
   host     : process.env.myurl,
   //host     : '192.168.1.4',
-  //user     : process.env.USERNAME,//'cicd_db_user',
-  user     : 'cicd_db_user',
-  //password : process.env.PASSWORD,//'cicd_db_user',
-  password : 'cicd_db_user',
+  user     : process.env.USERNAME,//'cicd_db_user',
+  //user     : 'cicd_db_user',
+  password : process.env.PASSWORD,//'cicd_db_user',
+  //password : 'cicd_db_user',
   database : 'cicd_accelerator'
 });
 

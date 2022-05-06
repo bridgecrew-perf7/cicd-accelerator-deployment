@@ -1,15 +1,17 @@
 var express = require('express');
 var CONSTANTS = require('./constants/serviceconstants.js')
+const apiMetrics = require('prometheus-api-metrics')
 
 const app = express()
+app.use(apiMetrics())
 
 var port = 3001
 
 const routedata = require('./route/route.js')
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "*");
+  res.header("Access-Control-Allow-Origin", "*developer.mozilla.org");
+  res.header("Access-Control-Allow-Methods", "*GET, POST, DELETE");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   express.urlencoded({
     extended: true
@@ -21,6 +23,11 @@ app.use(express.json())
 
 app.post('/', (req, res) => {
 	console.log(req)
+})
+
+app.get('/metrics', (req, res) => {
+   res.set('Content-Type', Prometheus.register.contentType)
+   res.end(Prometheus.register.metrics())
 })
 
 app.get('/api/checkUser', routedata.checkUser);
