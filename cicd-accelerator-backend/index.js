@@ -5,13 +5,14 @@ const apiMetrics = require('prometheus-api-metrics')
 const app = express()
 app.use(apiMetrics())
 
-var port = 3001
+//var port = 3001
+var port = 30023
 
 const routedata = require('./route/route.js')
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*developer.mozilla.org");
-  res.header("Access-Control-Allow-Methods", "*GET, POST, DELETE");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   express.urlencoded({
     extended: true
@@ -55,6 +56,8 @@ app.delete('/api/deletePipeline/:name', routedata.deletePipeline)
 app.get('/api/triggerPipeline/:name', routedata.triggerPipeline)
 
 app.get('/api/readLogs', routedata.readLogs)
+
+app.get('/api/checkConnectivity', routedata.checkConnectivity)
 
 app.get('/monument', (req, res) => {
 	console.log('Api monument')

@@ -24,6 +24,20 @@ module.exports = {
 		})
 	},
 	
+	checkConnectivity: function(req, res) {
+		db.checkConnectivity(function(pass, fail) {
+			if(pass) {
+				console.log(pass)				
+				res.end(pass)				
+				
+			}
+			else {				
+				console.log((fail))
+				res.end(fail)			
+			}
+		})
+	},
+	
 	getPipelineDetails: function(req, res) {
 		var pipelineName = req.query.pipelineName
 		console.log(pipelineName)
