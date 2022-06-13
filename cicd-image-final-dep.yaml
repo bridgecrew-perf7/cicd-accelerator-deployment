@@ -178,7 +178,7 @@ spec:
                 - sh
                 - -c
                 - |-
-                  curl -s http://localhost:3001/api/checkConnectivity | grep -c "Not Connected"  #Stops sending the traffic to pod, if this condition fails!
+                  curl -s http://localhost:3001/api/checkConnectivity | grep -c "Connected"  #Stops sending the traffic to pod, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5          
           imagePullPolicy: IfNotPresent
@@ -199,7 +199,7 @@ spec:
             - name: backend-volume
               mountPath: /var/log/cicd-logs  
         - name: cicd-backend-container
-          image: 'docker.io/surendharselvakumar/cicd-backend:1.0.1'		  
+          image: 'docker.io/surendharselvakumar/cicd-backend:1.0.2'		  
           livenessProbe:
             tcpSocket:
               port: 3001 #Container will restart on it's own, if this condition fails!
@@ -211,7 +211,7 @@ spec:
                 - sh
                 - -c
                 - |-
-                  curl -s http://localhost:3001/api/checkConnectivity | grep -c "Not Connected"  #Stops sending the traffic to pod, if this condition fails!
+                  curl -s http://localhost:3001/api/checkConnectivity | grep -c "Connected"  #Stops sending the traffic to pod, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5
           name: cicd-image-backend-resources

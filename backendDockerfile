@@ -10,7 +10,7 @@ RUN npm install
 
 WORKDIR /
 
-EXPOSE 3001
+EXPOSE 30023
 
 WORKDIR /
 

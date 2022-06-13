@@ -44,9 +44,9 @@ export default class Login extends Component {
 		console.log('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/api/checkUser')
  		axios.get('http://'+constants.BACKENDLOCALHOST+':'+constants.BACKENDPORT+'/')
 		.then(resp => {
-			console.log(resp)
+			console.log("This is the response", resp) 
 			if(resp.data === null || resp.data === undefined) {
-				alert('Backend service not available')
+				console.log('Backend service not available')
 			}
 		})
 	}
@@ -58,12 +58,15 @@ export default class Login extends Component {
 				password: this.state.password
 			}
 		}).then(resp => {
-			console.log(resp.data)
+			console.log("This is resp", resp.data)
 			if(resp.data == "Authorized") {				
 				this.props.history.push('/home', {username: this.state.username})
 				console.log(this.props.history.location.state.username)
 				sessionStorage.setItem('name', this.props.history.location.state.username);
 			}
+			else if(resp.data === null || resp.data === undefined) {
+				alert('Backend service not available')
+			}			
 			else {
 				alert('Username or password is incorrect')				
 			}
