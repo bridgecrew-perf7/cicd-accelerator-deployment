@@ -98,7 +98,7 @@ type: Opaque
               # command:
                 # - sh
                 # - -c
-                # - curl -s http://localhost:3001/api/getBuildServers | grep -c name #Container will restart on it's own, if this condition fails!
+                # - curl -s http://localhost:30023/api/getBuildServers | grep -c name #Container will restart on it's own, if this condition fails!
             # initialDelaySeconds: 15
             # periodSeconds: 5
           # readinessProbe:
@@ -106,7 +106,7 @@ type: Opaque
               # command:
                 # - sh
                 # - -c
-                # - curl -s http://localhost:3001/api/getBuildServers | grep -c name #Stops sending the traffic to pod, if this condition fails!
+                # - curl -s http://localhost:30023/api/getBuildServers | grep -c name #Stops sending the traffic to pod, if this condition fails!
             # initialDelaySeconds: 15
             # periodSeconds: 5
           # name: cicd-image-backend-resources
@@ -116,7 +116,7 @@ type: Opaque
             # requests:
               # cpu: 200m #Requested is 200Mi, if needed the pod scales upto maximum value, and reaches the value of 700Mi cpu limits
           # ports: 
-            # - containerPort: 3001
+            # - containerPort: 30023
               # protocol: TCP
           # volumeMounts:
             # - mountPath: "/var/log/cicd-logs/"
@@ -172,15 +172,15 @@ spec:
               port: 9600 #Container will restart on it's own, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5
-          readinessProbe:
-            exec:
-              command:
-                - sh
-                - -c
-                - |-
-                  curl -s http://localhost:3001/api/checkConnectivity | grep -c "Connected"  #Stops sending the traffic to pod, if this condition fails!
-            initialDelaySeconds: 15
-            periodSeconds: 5          
+          # readinessProbe:
+            # exec:
+              # command:
+                # - sh
+                # - -c
+                # - |-
+                  # curl -s http://localhost:30023/api/checkConnectivity | grep -c "Connected"  #Stops sending the traffic to pod, if this condition fails!
+            # initialDelaySeconds: 15
+            # periodSeconds: 5          
           imagePullPolicy: IfNotPresent
           name: cicd-image-logs-resources
           resources:
@@ -192,17 +192,16 @@ spec:
           - containerPort: 9600
             protocol: TCP          
           - containerPort: 5044
-            protocol: TCP      
-          - containerPort: 3001
-            protocol: TCP      
+            protocol: TCP           
           volumeMounts:
             - name: backend-volume
               mountPath: /var/log/cicd-logs  
         - name: cicd-backend-container
-          image: 'docker.io/surendharselvakumar/cicd-backend:1.0.2'		  
+          image: 'docker.io/surendharselvakumar/cicd-backend:1.0.4'		
+          imagePullPolicy: IfNotPresent          
           livenessProbe:
             tcpSocket:
-              port: 3001 #Container will restart on it's own, if this condition fails!
+              port: 30023 #Container will restart on it's own, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5
           readinessProbe:
@@ -211,7 +210,7 @@ spec:
                 - sh
                 - -c
                 - |-
-                  curl -s http://localhost:3001/api/checkConnectivity | grep -c "Connected"  #Stops sending the traffic to pod, if this condition fails!
+                  curl -s http://localhost:30023/api/checkConnectivity | grep -c "Connected"  #Stops sending the traffic to pod, if this condition fails!
             initialDelaySeconds: 15
             periodSeconds: 5
           name: cicd-image-backend-resources
@@ -221,7 +220,7 @@ spec:
             requests:
               cpu: 200m			
           ports: 
-            - containerPort: 3001
+            - containerPort: 30023
               protocol: TCP			
           volumeMounts:
             - name: backend-volume
@@ -268,7 +267,7 @@ spec:
         app: cicd-image-frontend
     spec:  
       containers: 
-        - image: "docker.io/surendharselvakumar/cicd-frontend:1.0.0"
+        - image: "docker.io/surendharselvakumar/cicd-frontend:1.0.1"
           imagePullPolicy: IfNotPresent
           livenessProbe:
             tcpSocket:
@@ -327,9 +326,9 @@ metadata:
   namespace: cicd-accelerator
 spec:
   ports:
-  - port: 3001 #port accessing in the server
+  - port: 30023 #port accessing in the server
     protocol: TCP
-    targetPort: 3001 #port exposed in docker container
+    targetPort: 30023 #port exposed in docker container
     nodePort: 30023
   selector:
     app: cicd-image-backend
@@ -445,7 +444,7 @@ status:
     # service:
       # name: cicd-backend-service
       # port:
-        # number: 3001
+        # number: 30023
   # rules:
   # - host: surendharapp-backend.com 
     # http:
@@ -456,7 +455,7 @@ status:
           # service:
             # name: cicd-backend-service
             # port:
-              # number: 3001
+              # number: 30023
               
 # ---
 
