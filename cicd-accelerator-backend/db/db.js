@@ -38,7 +38,7 @@ module.exports = {
 				console.log(err)
 			}
 			else {
-				callback(data.length > 0 ? "Connected" : "Not connected", null)
+				callback(data.length > 0 ? "Connected" : "Error", null)
 			}
 		})
 	},
