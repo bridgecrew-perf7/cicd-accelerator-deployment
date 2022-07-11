@@ -166,12 +166,12 @@ spec:
             claimName: cicd-pv-claim
       containers:
         - name: sidecar-containers
-          image: 'docker.io/surendharselvakumar/logstash:1.0.1'
-          livenessProbe:
-            tcpSocket:
-              port: 9600 #Container will restart on it's own, if this condition fails!
-            initialDelaySeconds: 15
-            periodSeconds: 5
+          image: 'docker.io/surendharselvakumar/logstash:1.0.2'
+          # livenessProbe:
+            # tcpSocket:
+              # port: 9600 #Container will restart on it's own, if this condition fails!
+            # initialDelaySeconds: 15
+            # periodSeconds: 5
           # readinessProbe:
             # exec:
               # command:
@@ -197,7 +197,7 @@ spec:
             - name: backend-volume
               mountPath: /var/log/cicd-logs  
         - name: cicd-backend-container
-          image: 'docker.io/surendharselvakumar/cicd-backend:1.0.4'		
+          image: 'docker.io/surendharselvakumar/cicd-backend:1.0.5'		
           imagePullPolicy: IfNotPresent          
           livenessProbe:
             tcpSocket:
@@ -338,6 +338,25 @@ spec:
     # ingress:
     # - hostname: localhost
     
+---
+
+# apiVersion: v1
+# kind: Service
+# metadata:  
+  # labels:
+    # app: cicd-image
+  # name: cicd-backend-service-logstash
+  # namespace: cicd-accelerator
+# spec:
+  # ports:
+  # - port: 9600 #port accessing in the server
+    # protocol: TCP
+    # targetPort: 9600 #port exposed in docker container
+    # nodePort: 30001
+  # selector:
+    # app: cicd-image-backend
+  # type: LoadBalancer
+
 ---
 
 # Please edit the object below. Lines beginning with a '#' will be ignored,

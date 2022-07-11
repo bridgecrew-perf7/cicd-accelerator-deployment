@@ -1,1 +1,5 @@
+helm repo add --username admin --password admin@123 cicd-image http://localhost:8081/repository/cicd-image/cicd-image-deployment-0.1.0.tgz
+
+helm push cicd-image-deployment-0.2.0.tgz oci://admin@admin@123@localhost:8081/cicd-image/repository
+
 helm install cicd-image cicd-image-deployment --set service.frontendport=3000 --set service.backendport=3001 --set image.tag=1.0.25 --set PASSWORD=cicd_db_user --set USERNAME=cicd_db_user --set config.name=surendharponnusamy --set service.frontendtype=LoadBalancer --set service.backendtype=LoadBalancer --set config.url=192.168.1.4 --set replicaCount=1 -n cicd-accelerator
